@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">C around</string>
+
+    <string name="menu_friends">Vänner</string>
+    <string name="menu_change_distans">Ändra avstånd</string>
+    <string name="menu_notification">Notifikation</string>
+    <string name="menu_busy">Upptagen</string>
+    <string name="menu_sing_out">Logga ut</string>
+
+    <string name="panel_number_of_friends">vänner</string>
+    <string name="panel_distans_m">m</string>
+    <string name="panel_distans_km">km</string>
+    <string name="panel_distans_mil">mil</string>
+
+    <string name="button_busy">Upptagen</string>
+
+    <string name="settings">Inställningar</string>
+    <string name="edit">Ändra</string>
+    <string name="exit">Logga ut</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="dia_change_distans_message">Ända avstånd</string>
+    <string name="dia_distans_m">m</string>
+    <string name="dia_distans_km">km</string>
+    <string name="dia_distans_mil">mil</string>
+
+
+</resources>

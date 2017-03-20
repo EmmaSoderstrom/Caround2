@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+ <!--
+   <item
+        android:id="@+id/discard"
+        android:icon="@drawable/ic_discard"
+        android:orderInCategory="100"
+        android:title="@string/delete"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="@string/search"
+        app:showAsAction="always"/>
+-->
+
+
+    <item
+        android:id="@+id/menu_friends"
+        android:title="@string/menu_friends"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_change_distans"
+        android:title="@string/menu_change_distans"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_notification"
+        android:title="@string/menu_notification"
+        android:checkable="true"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_busy"
+        android:title="@string/menu_busy"
+        android:checkable="true"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_sing_out"
+        android:title="@string/menu_sing_out"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+</menu>
