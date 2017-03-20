@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.maps.android.SphericalUtil;
 
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ArrayList<Person> personListArray = new ArrayList<Person>();
     PersonList personList;
 
+
+    private DatabaseReference mDatabase;
     Person thisUser;
     Person fakeP1;
     Person fakeP2;
@@ -165,6 +173,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void creatFakeUser(){
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        writeNewUser("Jonas", "Amnesten", 10000, 59.31803730000001, 18.38822559999994);
+        writeNewUser("Karolinska", "Instutet", 2000, 59.34814839999999, 18.023657800000024);
+        writeNewUser("Emma", "Söderström", 1550, 59.31803730000001, 18.38822559999994);
+
+
+
+
+
+
+
 
 
         Log.d("tag", "creatFakeUser ");
@@ -185,6 +205,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         updateChosenDistansText();
 
     }
+
+    private void writeNewUser(String startFirstName, String startLastName, int startChosenDistans,
+                              double startLocationLatitude, double startLocationLongitude) {
+        Person personClass = new Person(startFirstName, startLastName, startChosenDistans,
+                                    startLocationLatitude, startLocationLongitude);
+
+        Log.d("tag", "name" + startFirstName);
+
+        //mDatabase.child("users").child(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)).setValue(personClass);
+        mDatabase.child("users").child(startFirstName).setValue(personClass);
+
+    }
+
 
     public void updateChosenDistansText(){
         Log.d("tag", "updateChosenDistansText");
