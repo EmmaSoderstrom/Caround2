@@ -20,7 +20,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void goToMain(View view){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreateUser.class);
         startActivity(intent);
     }
 

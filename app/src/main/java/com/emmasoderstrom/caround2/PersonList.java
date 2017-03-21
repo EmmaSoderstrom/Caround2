@@ -142,7 +142,7 @@ public class PersonList extends ArrayAdapter<ListContiner> {
 
     public String[] personChosenDistansArrayListToArray(){
         for (int i = 0; i < closePersonArrayList.size(); i++) {
-            personChosenDistansArrayList.add(closePersonArrayList.get(i).getChosenDistans().toString());
+            //personChosenDistansArrayList.add(closePersonArrayList.get(i).getChosenDistans().toString());
         }
         String[] personChosenDistansArray = personChosenDistansArrayList.toArray(new String[personChosenDistansArrayList.size()]);
 

@@ -53,9 +53,9 @@ public class Person {
         return lastName;
     }
 
-    public String getChosenDistans(){
+    /**public String getChosenDistans(){
         return String.valueOf (chosenDistance);
-    }
+    }**/
 
     public int getChosenDistansInt(){
         return (chosenDistance);

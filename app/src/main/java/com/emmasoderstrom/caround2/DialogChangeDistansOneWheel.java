@@ -223,6 +223,7 @@ public class DialogChangeDistansOneWheel {
 
                         Log.d("tag", "Dialog Klar");
                         mainActivity.updateChosenDistansText();
+                        mainActivity.updateListOfClosePerson();
                         dialog.cancel();
 
                     }
