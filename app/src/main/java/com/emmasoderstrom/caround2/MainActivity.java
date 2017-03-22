@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,14 +78,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ArrayList<Person> personListArray = new ArrayList<Person>();
     PersonList personList;
 
+    long numberOfUser;
+
 
     private DatabaseReference mDatabase;
     Person thisUser;
-    Person fakeP1;
-    Person fakeP2;
-    Person fakeP3;
-    Person fakeP4;
-    Person fakeP5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         setToolbar();
 
-
         chosenDistansText = (TextView)findViewById(R.id.text_distans);
         panelDistansM = getString(R.string.panel_distans_m);
         panelDistansKm = getString(R.string.panel_distans_km);
@@ -99,6 +101,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         panelNumberOfFriends = getString(R.string.panel_number_of_friends);
         //mLatitudeText = (TextView)findViewById(R.id.text1);
         //mLongitudeText = (TextView)findViewById(R.id.text2);
+
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Log.d("tag", "databas");
+
+
+
+
+        //Log.d("tag", "this user" + thisUser.getChosenDistansInt());
+
+
+
 
         creatFakeUser();
         //FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -110,6 +124,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         createList();
 
+    }
+
+    public void setThisUser(){
+        Log.d("tag", "databas 2 ");
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("tag", "databas" + dataSnapshot.child("users")
+                        .child("Emma"));
+                /*thisUser = dataSnapshot.child("users")
+                        .child(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID))
+                        .getValue(Person.class);*/
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -146,10 +181,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case R.id.menu_change_distans:
                 Log.d("tag", "mainactivity menu_change_distans");
 
-
                 dialogChangeDistans.showDialogChangeDistans(this);
-
-
 
                 return true;
             case R.id.menu_notification:
@@ -173,34 +205,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void creatFakeUser(){
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Log.d("tag", "creatFakeUser ");
+        personList = new PersonList(this, 0);
+
+        //setThisUser();
+        thisUser = new Person ("Denna", "Denna", "Användare", 100000);
+        //writeNewUser("testtest", "Denna", "Användare", 10000);
 
         writeNewUser("Jonas", "Amnesten", 10000, 59.31803730000001, 18.38822559999994);
+        writeNewUser("Mamma", "Pappa", 10500, 59.35460399999999, 18.282052499999963);
+        writeNewUser("Slussen", "Slussen", 10000, 59.31951240000001, 18.07214060000001);
         writeNewUser("Karolinska", "Instutet", 2000, 59.34814839999999, 18.023657800000024);
         writeNewUser("Emma", "Söderström", 1550, 59.31803730000001, 18.38822559999994);
 
 
+        Log.d("tag", "user längd " + mDatabase.child("users"));
 
 
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("tag", " ändrat 1 ------------>>>>>>" + dataSnapshot.child("users").getChildrenCount());
+                numberOfUser = dataSnapshot.child("users").getChildrenCount();
 
+                //for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
+                    updateListOfClosePerson();
+                //}
 
+            }
 
-
-
-        Log.d("tag", "creatFakeUser ");
-        personList = new PersonList(this, 0);
-        thisUser = new Person ("Denna", "Användare", 100000);
-
-        fakeP1 = new Person("Jonas", "Amnesten", 10000, 59.31803730000001, 18.38822559999994);
-        personList.allPersonArrayList.add(fakeP1);
-        fakeP2 = new Person("Mamma", "Pappa", 10500, 59.35460399999999, 18.282052499999963);
-        personList.allPersonArrayList.add(fakeP2);
-        fakeP3 = new Person("Slussen", "Slussen", 500, 59.31951240000001, 18.07214060000001);
-        personList.allPersonArrayList.add(fakeP3);
-        fakeP4 = new Person("Karolinska", "Instutet", 2000, 59.34814839999999, 18.023657800000024);
-        personList.allPersonArrayList.add(fakeP4);
-        fakeP5 = new Person("Emma", "Söderström", 1550, 59.31803730000001, 18.38822559999994);
-        personList.allPersonArrayList.add(fakeP5);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("tag", " Error 2 ------------>>>>>>");
+            }
+        });
 
         updateChosenDistansText();
 
@@ -211,11 +249,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Person personClass = new Person(startFirstName, startLastName, startChosenDistans,
                                     startLocationLatitude, startLocationLongitude);
 
-        Log.d("tag", "name" + startFirstName);
-
-        //mDatabase.child("users").child(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)).setValue(personClass);
+        personList.allPersonArrayList.add(personClass);
         mDatabase.child("users").child(startFirstName).setValue(personClass);
 
+    }
+
+    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans) {
+        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans);
+        mDatabase.child("users").child(startFirstName).setValue(personClass);
     }
 
 
@@ -333,17 +374,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         updateListOfClosePerson();
 
         //skas ta bort senare, finns nu för att se position
-        updateUI();
-    }
 
-    //skas ta bort senare, finns nu för att se position
-    private void updateUI() {
-        //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-        //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-        //Log.d("tag"," log lat " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
     }
 
     public void setThisUsersNewLocation(Location location){
+        Log.d("tag", " setThisUsersNewLocation ______---------------------!!!!!! " + thisUser.getLocationLatitude());
         if(thisUser != null) {
             thisUser.setLocationLatitude(location.getLatitude());
             thisUser.setLocationLongitude(location.getLongitude());
@@ -372,30 +407,57 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "updateListClosePerson ");
         personList.closePersonArrayList.clear();
 
-        for (int i = 0; i < personList.allPersonArrayList.size(); i++) {
-            Person personB = personList.allPersonArrayList.get(i);
-            LatLng mPositionA;
-            LatLng mPositionB;
-            mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
-            mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+        //for (int i = 0; i < personList.allPersonArrayList.size(); i++) {
+            //Person personB = personList.allPersonArrayList.get(i);
 
-            double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
-            int distanceInM = (int)distance;
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-            if(distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()){
-                Log.d("tag", "closePersonArrayList " + personB.firstName + " " + distanceInM);
-                personB.setDistansBetween(distanceInM);
-                personList.closePersonArrayList.add(personB);
-            }
-        }
+                    for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
+                        //Log.d("tag", " lista databas " + snap.child("locationLatitude").getValue());
+                        Person personB = snap.getValue(Person.class);
 
-        personList.sortPersonArrayList();
+                        LatLng mPositionA;
+                        LatLng mPositionB;
+                        mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
+                        mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+
+                        double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
+                        int distanceInM = (int)distance;
+
+
+                        if(distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
+                                && personB.getPersonId() != "Denna" && personB.getPersonId() != Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)){
+                            //Log.d("tag", "closePersonArrayList " + personB.firstName + " " + distanceInM);
+                            personB.setDistansBetween(distanceInM);
+                            personList.closePersonArrayList.add(personB);
+                        }
+                    }
+
+                    personList.sortPersonArrayList();
+                    Log.d("tag", "onLocationChanged closePersonArrayList size " + personList.closePersonArrayList.size());
+
+                    String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
+                    numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
+                    createList();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        //}
+
+        /*personList.sortPersonArrayList();
         Log.d("tag", "onLocationChanged closePersonArrayList size " + personList.closePersonArrayList.size());
 
         String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
         //String panelNumberOfFriends = getString(R.string.panel_number_of_friends);
         numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
-        createList();
+        createList();*/
     }
 
     /**
@@ -437,25 +499,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     int count = 0;
     public void updatedData(ListContiner adapter) {
-        Log.d("tag", " updatedData " + count + " " + fakeP1.getFullName());
+        //Log.d("tag", " updatedData " + count + " " + fakeP1.getFullName());
 
         // för att testa förändring på vänner postition
         count++;
         if(count > 5){
-            fakeP3.setChosenDistans(100000);
+            //writeNewUser("Slussen", "Slussen", 200, 59.31951240000001, 18.07214060000001);
+            mDatabase.child("users").child("Slussen").child("chosenDistansInt").setValue(200);
+            //fakeP3.setChosenDistans(100000);
         }
         if (count > 10){
-            fakeP3.setChosenDistans(500);
+            // writeNewUser("Slussen", "Slussen", 10000, 59.31951240000001, 18.07214060000001);
+            mDatabase.child("users").child("Slussen").child("chosenDistansInt").setValue(10000);
+            //fakeP3.setChosenDistans(500);
 
-            fakeP2.setLocationLatitude(59.314449);
-            fakeP2.setLocationLongitude(59.314449);
+            //fakeP2.setLocationLatitude(59.314449);
+            //fakeP2.setLocationLongitude(59.314449);
         }
         if (count > 15){
-            fakeP2.setLocationLatitude(59.31803730000001);
-            fakeP2.setLocationLongitude(18.38822559999994);
+            //fakeP2.setLocationLatitude(59.31803730000001);
+            //fakeP2.setLocationLongitude(18.38822559999994);
             count = 0;
         }
 
+        //updateListOfClosePerson();
         //adapter.clear();
         //adapter.addAll(personList.closePersonArrayList);
     }
