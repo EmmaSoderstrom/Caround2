@@ -7,6 +7,7 @@ import android.location.Location;
  */
 public class Person {
 
+    String personId;
     Integer pic = R.drawable.ball;
     String firstName;
     String lastName;
@@ -17,8 +18,13 @@ public class Person {
     double locationLongitude;
     int distansBetween;
 
-    public Person(String startFirstName, String startLastName, int startChosenDistance){
+    public Person(){
 
+    }
+
+    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistance){
+
+        personId = startPersonId;
         firstName = startFirstName;
         lastName = startLastName;
         chosenDistance = startChosenDistance;
@@ -36,6 +42,10 @@ public class Person {
 
     }
 
+    public String getPersonId(){
+        return personId;
+    }
+
     public Integer getPic(){
         return pic;
     }
@@ -44,14 +54,15 @@ public class Person {
         return firstName;
     }
 
+    public String getLastName(){
+        return lastName;
+    }
+
     public String getFullName(){
         fullName = firstName + " " + lastName;
         return fullName;
     }
 
-    public String getLastName(){
-        return lastName;
-    }
 
     /**public String getChosenDistans(){
         return String.valueOf (chosenDistance);
@@ -59,6 +70,10 @@ public class Person {
 
     public int getChosenDistansInt(){
         return (chosenDistance);
+    }
+
+    public void setChosenDistansInt(int changeDistans){
+        chosenDistance = changeDistans;
     }
 
     public void setChosenDistans(int changeDistans){
@@ -88,6 +103,7 @@ public class Person {
     public void setLocationLongitude(double longitude){
         locationLongitude = longitude;
     }
+
 
     public int getDistansBetween(){
         return distansBetween;

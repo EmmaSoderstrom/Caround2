@@ -37,7 +37,7 @@
         android:onClick="creatUserDone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login_button_info"
+        android:text="@string/creat_user_button_done"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
 

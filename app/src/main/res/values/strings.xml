@@ -23,6 +23,7 @@
     <string name="creat_user_firstname">Namn</string>
     <string name="creat_user_lastname">Efternamn</string>
     <string name="creat_user_telnumber">Telefon nummer</string>
+    <string name="creat_user_button_done">Klar</string>
 
     <!--
     Huvudsida sida
