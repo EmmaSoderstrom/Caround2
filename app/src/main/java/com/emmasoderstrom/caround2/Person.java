@@ -31,9 +31,10 @@ public class Person {
 
     }
 
-    public Person(String startFirstName, String startLastName, int startChosenDistans,
+    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistans,
                   double startLocationLatitude, double startLocationLongitude){
 
+        personId = startPersonId;
         firstName = startFirstName;
         lastName = startLastName;
         chosenDistance = startChosenDistans;

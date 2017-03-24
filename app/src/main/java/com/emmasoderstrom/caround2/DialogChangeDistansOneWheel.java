@@ -15,6 +15,12 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 /**
@@ -49,8 +55,9 @@ public class DialogChangeDistansOneWheel {
         //oldChosenDistansText = startOldChosenDistansText;
     }
 
-    public void showDialogChangeDistans(Context context) {
+    public void showDialogChangeDistans(Context context, int startOldChosenDistans) {
 
+        oldChosenDistans = startOldChosenDistans;
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         //builder1.setMessage(R.string.dia_change_distans_message);
         builder1.setTitle(R.string.dia_change_distans_message);
@@ -144,9 +151,15 @@ public class DialogChangeDistansOneWheel {
 
 
         //sätter den rätta hjulet som vissas för användaren utifrån det nuvarande valda distansen
-        oldChosenDistans = thisUser.getChosenDistansInt();
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        /*if(thisUser != null) {
+            Log.d("tag", "oldChosenDistans" + oldChosenDistans);
+            oldChosenDistans = oldChosenDistans;
+        }*/
+        //oldChosenDistansText = (String) mainActivity.chosenDistansText.getText();
         oldChosenDistansText = (String) mainActivity.chosenDistansText.getText();
 
+        Log.d("tag", "oldChosenDistans" + oldChosenDistans);
         if(oldChosenDistans < 1000){
             host.setCurrentTab(0);
 
@@ -206,23 +219,29 @@ public class DialogChangeDistansOneWheel {
                             case 0:
                                 chosenvalueInM = chosenNumber.intValue();
                                 Log.d("tag"," tag 1 +  m " + chosenvalueInM);
-                                thisUser.setChosenDistans(chosenvalueInM);
+                                //thisUser.setChosenDistans(chosenvalueInM);
+                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.updateChosenDistansText(chosenvalueInM);
                                 break;
                             case 1:
                                 Double chosenvalueInMTemp = chosenNumber * 1000;
                                 chosenvalueInM = chosenvalueInMTemp.intValue();
                                 Log.d("tag"," tag 2 + km " + chosenvalueInM);
-                                thisUser.setChosenDistans(chosenvalueInM);
+                                //thisUser.setChosenDistans(chosenvalueInM);
+                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.updateChosenDistansText(chosenvalueInM);
                                 break;
                             case 2:
                                 chosenvalueInM = chosenNumber.intValue() * 10000;
                                 Log.d("tag"," tag 3 + mil " + chosenvalueInM);
-                                thisUser.setChosenDistans(chosenvalueInM);
+                                //thisUser.setChosenDistans(chosenvalueInM);
+                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.updateChosenDistansText(chosenvalueInM);
                                 break;
                         }
 
                         Log.d("tag", "Dialog Klar");
-                        mainActivity.updateChosenDistansText();
+
                         mainActivity.updateListOfClosePerson();
                         dialog.cancel();
 

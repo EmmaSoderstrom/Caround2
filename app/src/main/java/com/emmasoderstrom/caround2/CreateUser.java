@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CreateUser extends AppCompatActivity {
 
+    //public final static Person EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
     private DatabaseReference mDatabase;
     String personId;
     TextView firstName;
@@ -58,11 +59,11 @@ public class CreateUser extends AppCompatActivity {
                 && !telNumber.getText().toString().isEmpty()){
 
             //Skapa och lagra denna nya användare i databasen
-            Person personClass = new Person(personId, firstName.getText().toString(), lastName.getText().toString(), 5000);
-            mDatabase.child("users").child(personId).setValue(personClass);
+            Person personA = new Person(personId, firstName.getText().toString(), lastName.getText().toString(), 5000);
+            mDatabase.child("users").child(personId).setValue(personA);
 
             Intent intent = new Intent(this, MainActivity.class);
-            //intent.putExtra()
+            //intent.putExtra(personA);
             startActivity(intent);
         }
 
