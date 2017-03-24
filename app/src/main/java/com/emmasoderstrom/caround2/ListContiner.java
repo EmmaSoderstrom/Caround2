@@ -88,7 +88,11 @@ public class ListContiner extends ArrayAdapter<Person> {
         int distansConverted;
         String distansValue;
 
-        if(thisUserDistans < 1000){
+        String panelDistansM = context.getString(R.string.panel_distans_m);
+        String panelDistansKm = context.getString(R.string.panel_distans_km);
+        String panelDistansMil = context.getString(R.string.panel_distans_mil);
+
+        /*if(thisUserDistans < 1000){
             distansConverted = thisUserDistans;
             distansValue = "m";
         }else if(thisUserDistans < 10000){
@@ -97,9 +101,27 @@ public class ListContiner extends ArrayAdapter<Person> {
         }else{
             distansConverted = thisUserDistans / 10000;
             distansValue = "mil";
+        }*/
+
+        if (thisUserDistans < 1000) {
+            distansConverted = thisUserDistans;
+            distansValue = panelDistansM;
+
+            textDistansView.setText(distansConverted + " " + distansValue);
+        } else if (thisUserDistans < 10000) {
+            Double distansConvertedDouble = Double.valueOf(thisUserDistans) / 1000;
+            double distansConvertedDouble1decimals = (int)Math.round(distansConvertedDouble * 10)/(double)10;
+            distansValue = panelDistansKm;
+
+            textDistansView.setText(distansConvertedDouble1decimals + " " + distansValue);
+        } else {
+            distansConverted = thisUserDistans / 10000;
+            distansValue = panelDistansMil;
+
+            textDistansView.setText(distansConverted + " " + distansValue);
         }
 
-        textDistansView.setText(distansConverted + " " + distansValue);
+        //textDistansView.setText(distansConverted + " " + distansValue);
 
 
         //textDistansView.setText(String.valueOf(person.get(position).getDistansBetween()));

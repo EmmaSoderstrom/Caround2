@@ -88,8 +88,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setToolbar();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mapApiCreat();
 
+
+        setToolbar();
         chosenDistansText = (TextView)findViewById(R.id.text_distans);
         panelDistansM = getString(R.string.panel_distans_m);
         panelDistansKm = getString(R.string.panel_distans_km);
@@ -99,19 +102,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //mLatitudeText = (TextView)findViewById(R.id.text1);
         //mLongitudeText = (TextView)findViewById(R.id.text2);
 
-
-        thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        setThisUser();
-
-        creatFakeUser();
-
         dialogChangeDistans = new DialogChangeDistansOneWheel(this, thisUser);
 
+
+        thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        setThisUser();
+
+        personList = new PersonList(this, 0);
+        //creatFakeUser();
+
         //mapApiCreat();
-
-
-        //createList();
 
     }
 
@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     updateChosenDistansText(chosenDistansInt);
                 }else{
                     Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
+                    mDatabase.child("users").child(thisPersonPhoneId).child("signedIn").setValue(true);
                     thisUser = dataSnapshot.child("users")
                             .child(thisPersonPhoneId)
                             .getValue(Person.class);
-                    mapApiCreat();
                     Log.d("tag", "This  user " + thisUser.getFullName());
                 }
             }
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
         //sker när något ändras på denna användarens databas värden
-       /* mDatabase.child("users").child(thisPersonPhoneId).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("users").child(thisPersonPhoneId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
     }
 
     /**
@@ -168,24 +168,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void creatFakeUser(){
         Log.d("tag", "creatFakeUser ");
 
-        personList = new PersonList(this, 0);
+
 
         //thisUser = new Person ("Denna", "Denna", "Användare", 100000);
         //writeNewUser("testtest", "Denna", "Användare", 10000);
 
-        writeNewUser("id1", "Jonas", "Amnesten", 10000, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id2", "Mamma", "Pappa", 10500, 59.35460399999999, 18.282052499999963);
-        writeNewUser("id3", "Slussen", "Slussen", 10000, 59.31951240000001, 18.07214060000001);
-        writeNewUser("id4", "Karolinska", "Instutet", 2000, 59.34814839999999, 18.023657800000024);
-        writeNewUser("id5", "Emma", "Söderström", 1550, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id1", "Jonas", "Amnesten", 10000, true, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id2", "Mamma", "Pappa", 10500, true, 59.35460399999999, 18.282052499999963);
+        writeNewUser("id3", "Slussen", "Slussen", 10000, true, 59.31951240000001, 18.07214060000001);
+        writeNewUser("id4", "Karolinska", "Instutet", 2000, true, 59.34814839999999, 18.023657800000024);
+        writeNewUser("id5", "Emma", "Söderström", 1550, true, 59.31803730000001, 18.38822559999994);
 
         //updateChosenDistansText();
 
     }
 
-    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans,
+    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn,
                               double startLocationLatitude, double startLocationLongitude) {
-        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans,
+        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans, startSignedIn,
                 startLocationLatitude, startLocationLongitude);
 
         personList.allPersonArrayList.add(personClass);
@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans) {
-        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans);
+    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn) {
+        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans, startSignedIn);
         mDatabase.child("users").child(startFirstName).setValue(personClass);
     }
 
@@ -249,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
+                mDatabase.child("users").child(thisPersonPhoneId).child("signedIn").setValue(false);
                 intent = new Intent(this, Login.class);
                 startActivity(intent);
                 return true;
@@ -295,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
 
     public void mapApiCreat(){
+        Log.d("tag", "mapApiCreat");
         //"Skapar" API google map
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -307,19 +309,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     //Metoder till kartan och gps punkterna
     protected void onStart() {
-        if (mGoogleApiClient == null) {
-            Log.d("tag", "Start");
-            mGoogleApiClient.connect();
-            super.onStart();
-        }
+        Log.d("tag", "Start");
+        mGoogleApiClient.connect();
+        super.onStart();
     }
 
     protected void onStop() {
-        if (mGoogleApiClient == null) {
-            Log.d("tag", "Stop");
-            mGoogleApiClient.disconnect();
-            super.onStop();
-        }
+        Log.d("tag", "Stop");
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -327,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "onConnected");
 
 
-        personList.closePersonArrayList.clear();
+        //personList.closePersonArrayList.clear();
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -391,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "setThisUsersNewLocation");
 
         if(thisUser != null) {
+            Log.d("tag", " thisUser OK Sätter GPS");
             thisUser.setLocationLatitude(location.getLatitude());
             thisUser.setLocationLongitude(location.getLongitude());
             mDatabase.child("users").child(thisPersonPhoneId).child("locationLatitude").setValue(location.getLatitude());
@@ -466,15 +465,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void createList() {
         Log.d("tag", "createList");
 
-        /*if(adapter != null) {
-            updatedData(adapter);
-        }*/
-
         Integer[] picList = personList.personPicArrayListToArray();
-        Person[] closePersonList = personList.personClosePersonArrayListToArray();
+        //Person[] closePersonList = personList.personClosePersonArrayListToArray();
 
         if (adapter == null && personList.closePersonArrayList.size() > 0) {
-
+            Log.d("tag", "createList adapter NULL");
             adapter = new ListContiner(this, picList, personList.closePersonArrayList);
 
             listView = (ListView) findViewById(R.id.list_close_friends);
@@ -488,6 +483,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 }
             });
+        }else{
+            Log.d("tag", "createList adapter INTE null");
+            adapter.notifyDataSetChanged();
+            //updatedData(adapter);
         }
     }
 

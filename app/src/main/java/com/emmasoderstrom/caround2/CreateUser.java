@@ -59,7 +59,7 @@ public class CreateUser extends AppCompatActivity {
                 && !telNumber.getText().toString().isEmpty()){
 
             //Skapa och lagra denna nya användare i databasen
-            Person personA = new Person(personId, firstName.getText().toString(), lastName.getText().toString(), 5000);
+            Person personA = new Person(personId, firstName.getText().toString(), lastName.getText().toString(), 5000, true);
             mDatabase.child("users").child(personId).setValue(personA);
 
             Intent intent = new Intent(this, MainActivity.class);
