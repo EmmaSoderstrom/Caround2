@@ -158,12 +158,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     updateChosenDistansText(chosenDistansInt);
                 }*/
                 updateListOfClosePerson();
+
+                //dataSnapshot.child("users")
             }
+            
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
+
         });
     }
 
@@ -427,52 +432,78 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void updateListOfClosePerson() {
         Log.d("tag", "updateListClosePerson ");
 
+        //personList.closePersonArrayList.clear();
 
-        //if (personList.closePersonArrayList.isEmpty()){
-            Log.d("tag", "updateListClosePerson if");
+        //uppdatera alla vänner som är lagrade på telefonen utifrån
 
-            personList.closePersonArrayList.clear();
 
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
-                        Person personB = snap.getValue(Person.class);
+                thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
+                ArrayList<String> closePersonIdList = new ArrayList<String>();
 
-                        LatLng mPositionA;
-                        LatLng mPositionB;
-                        mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
-                        mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+                //kollar alla användare i databasen
+                for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
+                    Person personB = snap.getValue(Person.class);
 
-                        double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
-                        int distanceInM = (int) distance;
+                    int distanceInM;
+                    //kollar avståndet mellan denna användare och personB
+                    distanceInM = getDistanBetween(personB);
 
-                        if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
-                                && !thisPersonPhoneId.equals(personB.getPersonId())) {
+                    //skapar en arraylist med alla nuvarande nära vänners id
+                    for(Person personBToGetId : personList.closePersonArrayList ){
+                        String personBId = personBToGetId.getPersonId();
+                        closePersonIdList.add(personBId);
+                    }
+
+                    //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
+                    //läggs personB till i personList.closePersonArrayList
+                    if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
+                        && !thisPersonPhoneId.equals(personB.getPersonId())) {
+
+                        if(!closePersonIdList.contains(personB.getPersonId())) {
                             personB.setDistansBetween(distanceInM);
                             personList.closePersonArrayList.add(personB);
                         }
                     }
 
-                    personList.sortPersonArrayList();
-
-                    String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
-                    numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
-                    createList();
+                    //kollar hella personList.closePersonArrayList om det är någon som ska bort
+                    //utifall avståndet har ändrats
+                    for (Person personBToRemove : personList.closePersonArrayList ){
+                        distanceInM = getDistanBetween(personBToRemove);
+                        if (distanceInM > thisUser.getChosenDistansInt() && distanceInM > personB.getChosenDistansInt()) {
+                            personList.closePersonArrayList.remove(personBToRemove);
+                        }
+                    }
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                personList.sortPersonArrayList();
 
-                }
-            });
-        /*}else{
-            Log.d("tag", "updateListClosePerson else");
-            createList();
-        }*/
+                String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
+                numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
+                createList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public int getDistanBetween(Person personB){
+        LatLng mPositionA;
+        LatLng mPositionB;
+        mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
+        mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+
+        double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
+        int distanceInM = (int) distance;
+        return distanceInM;
     }
 
     /**
