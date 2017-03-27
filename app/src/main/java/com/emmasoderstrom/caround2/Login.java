@@ -42,6 +42,7 @@ public class Login extends AppCompatActivity {
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
                     Person user = snap.getValue(Person.class);
                     String userId = user.getPersonId();
+
                     if(userId.equals(thisPersonPhoneId)){
 
                         if(user.getSignedIn()) {
@@ -52,8 +53,6 @@ public class Login extends AppCompatActivity {
                             Button creatButton = (Button)findViewById(R.id.creat);
                             loginButton.setVisibility(View.VISIBLE);
                             creatButton.setVisibility(View.INVISIBLE);
-
-
                         }
                     }
                 }
@@ -68,7 +67,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void goToCreat(View view){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreateUser.class);
         startActivity(intent);
     }
 

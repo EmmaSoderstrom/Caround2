@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     Toolbar toolbar;
     DialogChangeDistansOneWheel dialogChangeDistans;
+    DialogViewListFriend dialogViewListFriend;
     Intent intent;
 
     final static int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //mLongitudeText = (TextView)findViewById(R.id.text2);
 
         dialogChangeDistans = new DialogChangeDistansOneWheel(this, thisUser);
+        dialogViewListFriend = new DialogViewListFriend();
 
 
         thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -123,18 +125,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(thisUser != null) {
+                /*if(thisUser != null) {
                     Log.d("tag", "<----------------spelare INTE null------------------>>>>>>>>>>");
                     chosenDistansInt = thisUser.getChosenDistansInt();
                     updateChosenDistansText(chosenDistansInt);
-                }else{
+                }else{*/
                     Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
                     mDatabase.child("users").child(thisPersonPhoneId).child("signedIn").setValue(true);
                     thisUser = dataSnapshot.child("users")
                             .child(thisPersonPhoneId)
                             .getValue(Person.class);
+                    chosenDistansInt = thisUser.getChosenDistansInt();
+                    updateChosenDistansText(chosenDistansInt);
                     Log.d("tag", "This  user " + thisUser.getFullName());
-                }
+                //}
             }
 
             @Override
@@ -149,10 +153,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
                 thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
-                if(thisUser != null) {
+                /*if(thisUser != null) {
                     chosenDistansInt = thisUser.getChosenDistansInt();
                     updateChosenDistansText(chosenDistansInt);
-                }
+                }*/
+                updateListOfClosePerson();
             }
 
             @Override
@@ -381,24 +386,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setThisUsersNewLocation(location);
         //updateListOfClosePerson();
 
-        //skas ta bort senare, finns nu för att se position
 
     }
 
     public void setThisUsersNewLocation(Location location){
         Log.d("tag", "setThisUsersNewLocation");
+        Log.d("tag", "thisuser" + thisUser);
+        //Log.d("tag", "thisuser" + thisUser.getFullName());
 
-        if(thisUser != null) {
+        //if(thisUser != null) {
             Log.d("tag", " thisUser OK Sätter GPS");
-            thisUser.setLocationLatitude(location.getLatitude());
-            thisUser.setLocationLongitude(location.getLongitude());
+            //thisUser.setLocationLatitude(location.getLatitude());
+            //thisUser.setLocationLongitude(location.getLongitude());
             mDatabase.child("users").child(thisPersonPhoneId).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisPersonPhoneId).child("locationLongitude").setValue(location.getLongitude());
 
-            updateListOfClosePerson();
-        }else{
-            Log.d("tag", " thisUser == null ______---------------------!!!!!! ");
-        }
+            //updateListOfClosePerson();
+
+        //}else{
+           // Log.d("tag", " thisUser == null ______---------------------!!!!!! ");
+        //}
     }
 
     @Override
@@ -417,46 +424,55 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * Skapar en lista med personer som är nära. Den listan skapas utifrån vänlistan.
      * De personer som är nära läggs i en arraylist personList.closePersonArrayList
      */
-    public void updateListOfClosePerson(){
+    public void updateListOfClosePerson() {
         Log.d("tag", "updateListClosePerson ");
-        personList.closePersonArrayList.clear();
 
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
+        //if (personList.closePersonArrayList.isEmpty()){
+            Log.d("tag", "updateListClosePerson if");
 
-                for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
-                    Person personB = snap.getValue(Person.class);
+            personList.closePersonArrayList.clear();
 
-                    LatLng mPositionA;
-                    LatLng mPositionB;
-                    mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
-                    mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
-                    int distanceInM = (int)distance;
+                    thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
 
-                    if(distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
-                            && !thisPersonPhoneId.equals(personB.getPersonId())){
-                        personB.setDistansBetween(distanceInM);
-                        personList.closePersonArrayList.add(personB);
+                    for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
+                        Person personB = snap.getValue(Person.class);
+
+                        LatLng mPositionA;
+                        LatLng mPositionB;
+                        mPositionA = new LatLng(thisUser.getLocationLatitude(), thisUser.getLocationLongitude());
+                        mPositionB = new LatLng(personB.getLocationLatitude(), personB.getLocationLongitude());
+
+                        double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
+                        int distanceInM = (int) distance;
+
+                        if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
+                                && !thisPersonPhoneId.equals(personB.getPersonId())) {
+                            personB.setDistansBetween(distanceInM);
+                            personList.closePersonArrayList.add(personB);
+                        }
                     }
+
+                    personList.sortPersonArrayList();
+
+                    String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
+                    numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
+                    createList();
                 }
 
-                personList.sortPersonArrayList();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
-                numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
-                createList();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        /*}else{
+            Log.d("tag", "updateListClosePerson else");
+            createList();
+        }*/
     }
 
     /**
@@ -468,23 +484,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Integer[] picList = personList.personPicArrayListToArray();
         //Person[] closePersonList = personList.personClosePersonArrayListToArray();
 
-        if (adapter == null && personList.closePersonArrayList.size() > 0) {
+        if (adapter == null) {
             Log.d("tag", "createList adapter NULL");
             adapter = new ListContiner(this, picList, personList.closePersonArrayList);
 
             listView = (ListView) findViewById(R.id.list_close_friends);
             listView.setAdapter(adapter);
 
+
+
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
                 Log.d("tag", " click på en vän");
+
+                dialogViewListFriend.showDialogViewListFriend(getWindow().getContext());
 
                 }
             });
+
+
+
         }else{
-            Log.d("tag", "createList adapter INTE null");
+            Log.d("tag", "createList notifyDataSetChanged");
             adapter.notifyDataSetChanged();
             //updatedData(adapter);
         }

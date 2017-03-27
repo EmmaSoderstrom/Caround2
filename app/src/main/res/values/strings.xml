@@ -42,12 +42,17 @@
     <string name="title_activity_maps">Map</string>
 
     <!--
-    Dialog ruta
+    Ändra avstånd dialog ruta
     -->
     <string name="dia_change_distans_message">Ända avstånd</string>
     <string name="dia_distans_m">m</string>
     <string name="dia_distans_km">km</string>
     <string name="dia_distans_mil">mil</string>
+
+    <!--
+    Vänlista dialog ruta
+    -->
+    <string name="dia_friend_list_message">Vän</string>
 
 
 </resources>
