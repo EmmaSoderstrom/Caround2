@@ -1,5 +1,7 @@
 package com.emmasoderstrom.caround2;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 public class Person {
 
     String personId;
+    String userPic;
     Integer pic = R.drawable.ball;
     String firstName;
     String lastName;
@@ -28,9 +31,10 @@ public class Person {
 
     }
 
-    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistance){
+    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName, int startChosenDistance){
 
         personId = startPersonId;
+        userPic = startUserPic;
         firstName = startFirstName;
         lastName = startLastName;
         chosenDistance = startChosenDistance;
@@ -55,6 +59,14 @@ public class Person {
 
     public Integer getPic(){
         return pic;
+    }
+
+    public String getUserPic() {
+        return userPic;
+    }
+
+    public void setUserPic(String userPic) {
+        this.userPic = userPic;
     }
 
     public String getFirstName(){

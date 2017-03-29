@@ -196,10 +196,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn) {
+    /*private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn) {
         Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans);
         mDatabase.child("users").child(startFirstName).setValue(personClass);
-    }
+    }*/
 
 
 

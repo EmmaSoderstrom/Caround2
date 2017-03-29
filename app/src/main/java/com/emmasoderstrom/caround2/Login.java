@@ -33,7 +33,6 @@ import com.google.firebase.database.ValueEventListener;
 public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static int RC_SIGN_IN = 0;
-    private static String TAG = "MAIN_ACTIVITY";
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -55,10 +54,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         //getSupportActionBar().setTitle("C around");
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-
-
         mAuth = FirebaseAuth.getInstance();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -129,24 +126,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         });*/
 
     }
-
-
-
-
-
-    /*public void goToCreat(View view){
-        Intent intent = new Intent(this, CreateUser.class);
-        startActivity(intent);
-    }
-
-    public void goToMain(View view){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    public void goToInfo(View view){
-
-    }*/
 
 
 
@@ -254,5 +233,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     public void goToMain(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    public void goToInfo(View view){
+
     }
 }
