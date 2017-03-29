@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
@@ -155,7 +156,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
                 thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
 
-                updateListOfClosePerson();
+                Log.d("tag", "onDataChange: mDatabase " + mDatabase + " " + thisUser);
+                if(thisUser != null) {
+                    updateListOfClosePerson();
+                }
 
 
             }
@@ -253,6 +257,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
+                FirebaseAuth.getInstance().signOut();
+                thisUser = null;
                 intent = new Intent(this, Login.class);
                 startActivity(intent);
                 return true;

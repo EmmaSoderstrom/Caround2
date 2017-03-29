@@ -42,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static android.R.attr.data;
 
@@ -147,10 +148,11 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 && !telNumber.getText().toString().isEmpty()){
 
             //Skapa och lagra denna nya användare i databasen
+
             //conventerar bil UIR till sträng så databasen kan ta imot den
             String picString = userPic.toString();
 
-            Person personA = new Person(thisUserID, picString, firstName.getText().toString(), lastName.getText().toString(), 5000);
+            Person personA = new Person(thisUserID, picString, firstName.getText().toString(), lastName.getText().toString(), 6000);
             mDatabase.child("users").child(thisUserID).setValue(personA);
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -158,6 +160,8 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
             startActivity(intent);
         }
     }
+
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

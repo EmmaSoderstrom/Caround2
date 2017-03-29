@@ -23,25 +23,7 @@
         android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/creat"/>
-
-    <Button
-        android:id="@+id/creat"
-        android:onClick="goToCreat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/login_button_creat_user"
-        android:layout_above="@+id/info"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/login"
-        android:onClick="goToMain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/login_button_login"
-        android:layout_above="@+id/info"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible"/>
+        android:layout_above="@+id/info"/>
 
     <Button
         android:id="@+id/info"

@@ -60,13 +60,15 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                userEmail = user.getEmail();
-                userUID = user.getUid();
 
-                if(user != null)
+                if(user != null) {
                     Log.d("AUTH", "user logged in: " + user.getEmail());
-                else
+                    userEmail = user.getEmail();
+                    userUID = user.getUid();
+
+                }else {
                     Log.d("AUTH", "user logged out.");
+                }
             }
         };
 
@@ -193,9 +195,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             case R.id.sign_in_button:
                 signIn();
                 break;
-            /*case R.id.sign_out_button:
-                signOut();
-                break;*/
         }
     }
 
@@ -226,7 +225,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     public void goToCreat(){
         Intent intent = new Intent(this, CreateUser.class);
-        intent.putExtra(EXTRA_MESSAGE, userUID);
+        String emailValid = emailReplaceInvaid(userEmail);
+        Log.d("tag", "goToCreat: emailValid " + emailValid);
+        intent.putExtra(EXTRA_MESSAGE, emailValid);
         startActivity(intent);
     }
 
@@ -237,5 +238,16 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     public void goToInfo(View view){
 
+    }
+
+    private String emailReplaceInvaid(String email){
+
+        String emailValid = email.replace(".", "%1%")
+                .replace("#", "%2%")
+                .replace("$", "%3%")
+                .replace("[", "%4%")
+                .replace("]", "%5%");
+
+        return emailValid;
     }
 }
