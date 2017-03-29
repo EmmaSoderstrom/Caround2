@@ -7,21 +7,28 @@
 
     <!-- Base application theme. -->
     <style name="ParentMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
-
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">#ffffff</item>
     </style>
 
     <style name="menuPopdownTheme" parent="ThemeOverlay.AppCompat.Light">
-
         <item name="android:textColorPrimary">#000000</item>
+    </style>
+
+    <style name="TabWidgetThemeBlack" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+    </style>
+
+    <style name="TabWidgetThemeWhite" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/textColoPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
     </style>
 
 </resources>

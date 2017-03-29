@@ -50,9 +50,11 @@
     <string name="dia_distans_mil">mil</string>
 
     <!--
-    Vänlista dialog ruta
+    Vänsida
     -->
-    <string name="dia_friend_list_message">Vän</string>
+    <string name="friend_list_message">Vän</string>
+    <string name="friend_tab_fri">Vänner</string>
+    <string name="friend_tab_friReq">Vänförfrågningar</string>
 
 
 </resources>

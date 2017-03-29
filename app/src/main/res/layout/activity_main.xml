@@ -71,6 +71,12 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
     android:layout_alignParentBottom="true"/>
 -->
 
+<RelativeLayout
+    android:id="@+id/frien_list_layout"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:background="#ce0b0b">
 
+</RelativeLayout>
 
 </RelativeLayout>

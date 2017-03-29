@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CreateUser extends AppCompatActivity {
 
-    //public final static Person EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
+    final static String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
+    String userEmail;
     private DatabaseReference mDatabase;
     String personId;
     TextView firstName;
@@ -32,13 +34,24 @@ public class CreateUser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
 
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
+        userEmail = message;
+        Log.d("tag", "onCreate: " + message);
+
+
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         personId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         firstName = (TextView)findViewById(R.id.creat_user_firstname);
+        firstName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         lastName = (TextView)findViewById(R.id.creat_user_lastname);
+        lastName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         telNumber = (TextView)findViewById(R.id.creat_user_telnumber);
+        telNumber.setInputType(InputType.TYPE_CLASS_PHONE);
 
 
         TelephonyManager telManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
@@ -59,11 +72,11 @@ public class CreateUser extends AppCompatActivity {
                 && !telNumber.getText().toString().isEmpty()){
 
             //Skapa och lagra denna nya användare i databasen
-            Person personA = new Person(personId, firstName.getText().toString(), lastName.getText().toString(), 5000, true);
-            mDatabase.child("users").child(personId).setValue(personA);
+            Person personA = new Person(userEmail, firstName.getText().toString(), lastName.getText().toString(), 5000);
+            mDatabase.child("users").child(userEmail).setValue(personA);
 
             Intent intent = new Intent(this, MainActivity.class);
-            //intent.putExtra(personA);
+            intent.putExtra(EXTRA_MESSAGE, userEmail);
             startActivity(intent);
         }
 

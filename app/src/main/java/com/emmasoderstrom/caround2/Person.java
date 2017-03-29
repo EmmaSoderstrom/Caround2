@@ -2,6 +2,8 @@ package com.emmasoderstrom.caround2;
 
 import android.location.Location;
 
+import java.util.ArrayList;
+
 /**
  * Created by User on 2017-03-07.
  */
@@ -17,20 +19,21 @@ public class Person {
     double locationLatitude;
     double locationLongitude;
     int distansBetween;
-    boolean signedIn;
+
+    ArrayList<String> friendRequests = new ArrayList<String>();
+    ArrayList<String> friendAllowed = new ArrayList<String>();
 
 
     public Person(){
 
     }
 
-    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistance, boolean startSignedIn){
+    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistance){
 
         personId = startPersonId;
         firstName = startFirstName;
         lastName = startLastName;
         chosenDistance = startChosenDistance;
-        signedIn = startSignedIn;
 
     }
 
@@ -83,13 +86,6 @@ public class Person {
         chosenDistance = changeDistans;
     }
 
-    public boolean getSignedIn(){
-        return signedIn;
-    }
-    public void setSignedIn(boolean changeSignedIn){
-        signedIn = changeSignedIn;
-    }
-
     public Location getLocation(){
         return location;
     }
@@ -123,4 +119,19 @@ public class Person {
         distansBetween = distans;
     }
 
+    public ArrayList<String> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void setFriendRequests(ArrayList<String> friendRequests) {
+        this.friendRequests = friendRequests;
+    }
+
+    public ArrayList<String> getFriendAllowed() {
+        return friendAllowed;
+    }
+
+    public void setFriendAllowed(ArrayList<String> friendAllowed) {
+        this.friendAllowed = friendAllowed;
+    }
 }

@@ -19,7 +19,7 @@ public class DialogViewListFriend {
 
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-        builder1.setTitle(R.string.dia_friend_list_message);
+        //builder1.setTitle(R.string.dia_friend_list_message);
         builder1.setCancelable(true);
         View diaView = View.inflate(context, R.layout.dialog_view_list_friend, null);
 
