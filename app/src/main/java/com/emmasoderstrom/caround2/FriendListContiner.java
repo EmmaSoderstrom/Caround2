@@ -9,13 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by User on 2017-03-02.
  */
 
-public class ListContiner extends ArrayAdapter<Person> {
+public class FriendListContiner extends ArrayAdapter<Person> {
 
     private final Activity context;
 
@@ -27,7 +26,7 @@ public class ListContiner extends ArrayAdapter<Person> {
 
 
 
-    public ListContiner(Activity context, Integer[] startPic, ArrayList<Person> startPerson) {
+    public FriendListContiner(Activity context, Integer[] startPic, ArrayList<Person> startPerson) {
         super(context, R.layout.list_item, startPerson);
 
         this.context = context;
@@ -65,6 +64,12 @@ public class ListContiner extends ArrayAdapter<Person> {
             rowView = (View) convertView;
         }
 
+        /*TextView text1 = rowView.getText1();
+        TextView text2 = rowView.getText2();
+
+        text1.setText(persons.get(position).getName());
+        text2.setText("" + persons.get(position).getAge());*/
+
         //ImageView imagePicView = (ImageView) rowView.findViewById(R.id.icon);
         TextView textNameView = (TextView) rowView.findViewById(R.id.list_name);
         TextView textDistansView = (TextView) rowView.findViewById(R.id.list_distans);
@@ -86,6 +91,17 @@ public class ListContiner extends ArrayAdapter<Person> {
         String panelDistansKm = context.getString(R.string.panel_distans_km);
         String panelDistansMil = context.getString(R.string.panel_distans_mil);
 
+        /*if(thisUserDistans < 1000){
+            distansConverted = thisUserDistans;
+            distansValue = "m";
+        }else if(thisUserDistans < 10000){
+            distansConverted = thisUserDistans / 1000;
+            distansValue = "km";
+        }else{
+            distansConverted = thisUserDistans / 10000;
+            distansValue = "mil";
+        }*/
+
         if (thisUserDistans < 1000) {
             distansConverted = thisUserDistans;
             distansValue = panelDistansM;
@@ -105,6 +121,8 @@ public class ListContiner extends ArrayAdapter<Person> {
         }
 
         //textDistansView.setText(distansConverted + " " + distansValue);
+
+
         //textDistansView.setText(String.valueOf(person.get(position).getDistansBetween()));
 
         return rowView;

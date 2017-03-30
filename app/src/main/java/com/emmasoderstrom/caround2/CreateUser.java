@@ -82,6 +82,11 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        Log.d("tag", "onCreate: getProviderId " + user.getProviderId());
+        Log.d("tag", "onCreate: getProviderId " + user.getUid());
+        Log.d("tag", "onCreate: getProviderId " + user.getDisplayName());
+        Log.d("tag", "onCreate: getProviderId " + user.getProviderId());
+
         if (user != null) {
             userPic = user.getPhotoUrl();
             String userPicS = userPic.toString();
@@ -117,6 +122,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                     if(userId.equals(thisUserID)){
                         firstName.setText(user.getFirstName());
                         lastName.setText(user.getLastName());
+                        telNumber.setText(user.getPhoneNumber());
 
                         break;
                     }
@@ -130,14 +136,14 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         });
 
 
-        TelephonyManager telManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        /*TelephonyManager telManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = telManager.getLine1Number();
         Log.d("tag", "telefon nummer Null " + mPhoneNumber);
 
         if(!mPhoneNumber.isEmpty() && mPhoneNumber != null){
             Log.d("tag", "telefon nummer inte empty eller null" + mPhoneNumber);
             telNumber.setText(mPhoneNumber);
-        }
+        }*/
     }
 
     public void creatUserDone(View view) {
@@ -152,7 +158,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
             //conventerar bil UIR till sträng så databasen kan ta imot den
             String picString = userPic.toString();
 
-            Person personA = new Person(thisUserID, picString, firstName.getText().toString(), lastName.getText().toString(), 6000);
+            Person personA = new Person(thisUserID, picString, firstName.getText().toString(), lastName.getText().toString(),telNumber.getText().toString(), 6000);
             mDatabase.child("users").child(thisUserID).setValue(personA);
 
             Intent intent = new Intent(this, MainActivity.class);

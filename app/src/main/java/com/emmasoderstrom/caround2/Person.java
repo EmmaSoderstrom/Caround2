@@ -1,9 +1,13 @@
 package com.emmasoderstrom.caround2;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -17,26 +21,38 @@ public class Person {
     String firstName;
     String lastName;
     String fullName;
+    String phoneNumber;
     int chosenDistance;
     Location location;
     double locationLatitude;
     double locationLongitude;
     int distansBetween;
 
-    ArrayList<String> friendRequests = new ArrayList<String>();
-    ArrayList<String> friendAllowed = new ArrayList<String>();
+    ArrayList<Person> friendRequests = new ArrayList<Person>();
+    ArrayList<Person> friendAllowed = new ArrayList<Person>();
+
+    /*Uri userPicURI;
+    Bitmap userBitmap;*/
 
 
     public Person(){
 
     }
 
-    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName, int startChosenDistance){
+    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistance){
 
         personId = startPersonId;
         userPic = startUserPic;
+
+
+        //Uri myUri = Uri.parse(startUserPic);
+        /*String userPicS = startUserPic.toString();
+        Bitmap userPicBitmap = doInBackground(userPicS);
+        pic = userPicBitmap;*/
+
         firstName = startFirstName;
         lastName = startLastName;
+        phoneNumber = startPhoneNumber;
         chosenDistance = startChosenDistance;
 
     }
@@ -82,6 +98,9 @@ public class Person {
         return fullName;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
     /**public String getChosenDistans(){
         return String.valueOf (chosenDistance);
@@ -131,19 +150,39 @@ public class Person {
         distansBetween = distans;
     }
 
-    public ArrayList<String> getFriendRequests() {
+    public ArrayList<Person> getFriendRequests() {
         return friendRequests;
     }
 
-    public void setFriendRequests(ArrayList<String> friendRequests) {
+    public void setFriendRequests(ArrayList<Person> friendRequests) {
         this.friendRequests = friendRequests;
     }
 
-    public ArrayList<String> getFriendAllowed() {
+    public ArrayList<Person> getFriendAllowed() {
         return friendAllowed;
     }
 
-    public void setFriendAllowed(ArrayList<String> friendAllowed) {
+    public void setFriendAllowed(ArrayList<Person> friendAllowed) {
         this.friendAllowed = friendAllowed;
     }
+
+
+       /* public Bitmap doInBackground(String... URL) {
+
+            //String image = userPic.toString();
+            String imageURL = URL[0];
+
+            Bitmap bitmap = null;
+            try {
+                // Download Image from URL
+                InputStream input = new java.net.URL(imageURL).openStream();
+                // Decode Bitmap
+                bitmap = BitmapFactory.decodeStream(input);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            userBitmap = bitmap;
+            return bitmap;
+        }*/
+
 }

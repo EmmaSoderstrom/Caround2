@@ -56,5 +56,10 @@
     <string name="friend_tab_fri">Vänner</string>
     <string name="friend_tab_friReq">Vänförfrågningar</string>
 
+    <!--
+    Vänsida dialog
+    -->
+    <string name="friend_dia_add_friend">Lägg till vänner</string>
+
 
 </resources>

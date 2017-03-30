@@ -1,6 +1,8 @@
 package com.emmasoderstrom.caround2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -22,6 +24,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -54,6 +57,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener  {
+
+    public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
+    public static final String USER_ID_KEY = "userIdKey";
+    public static String thisUserID;
+    public static SharedPreferences sharedPreferences;
 
     Intent intent;
     private DatabaseReference mDatabase;
@@ -90,9 +98,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
+        //thisUserID = 1;
+
+
         Intent intent = getIntent();
         String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
         thisPersonPhoneId = message;
+        thisUserID = message;
         Log.d("tag", "onCreate: " + message);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -258,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
                 FirebaseAuth.getInstance().signOut();
+                //Auth.GoogleSignInApi.signOut();
+
                 thisUser = null;
                 intent = new Intent(this, Login.class);
                 startActivity(intent);
@@ -520,9 +537,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             listView = (ListView) findViewById(R.id.list_close_friends);
             listView.setAdapter(adapter);
-
-
-
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

@@ -171,8 +171,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                         Log.d("tag", "signInWithCredential:oncomplete: " + task.isSuccessful());
 
                         checkIfToCreatuser();
-                    }
-                });
+
+
+                        }
+                    });
     }
 
     private void signIn(){
@@ -237,7 +239,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     public void goToInfo(View view){
-
+        FirebaseAuth.getInstance().signOut();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     private String emailReplaceInvaid(String email){
