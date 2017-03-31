@@ -13,12 +13,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -29,15 +37,35 @@ public class DialogAddFriend{
 
 
     Context context;
+    private DatabaseReference mDatabase;
     View diaFriendView;
     //FriendHandler friendHandler;
     Person thisUser;
 
-    ArrayList<String> nameFromContacts = new ArrayList<String>();
-    FriendListContiner adapter;
-    ListView listView = null;
+    //ArrayList<String> allDataBasPhoneNum = new ArrayList<String>();
 
-    private DatabaseReference mDatabase;
+    AlertDialog.Builder builder1;
+
+    ArrayList<String> tempArrayNotDoubleNumber = new ArrayList<String>();
+    ArrayList<String> nameFromContacts = new ArrayList<String>();
+    PhoneBookContacts adapter;
+    ListView diaListView;
+    String[] listItems;
+    boolean[] checkedItems;
+    CheckBox addCheckbox;
+
+    /*String listItems[] = {
+            "Jonas"+" "+"Amnesten",
+            "Emma"+" "+"Södetersöm",
+            "Lisa"+" "+"Svensson",
+            "Sara"+" "+"Johansson",
+
+    };*/
+
+
+
+    ArrayList<String> testName = new ArrayList<String>();
+
 
     public DialogAddFriend(Context context, Person startThisUser){
         super();
@@ -51,18 +79,69 @@ public class DialogAddFriend{
 
         context = sContext;
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+
+
+        builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(R.string.friend_dia_add_friend);
         builder1.setCancelable(true);
 
         View diaView = View.inflate(context, R.layout.dialog_add_friend, null);
 
-        setFriendList(diaView);
+        //getAllDatabasNumber(diaView);
+
+        //rrayList<String>  mStringList= new ArrayList<String>();;
+        //listItems = new String[nameFromContacts.size()];
 
 
 
-        builder1.setView(diaView);
+
+        testName.add("Emma");
+        testName.add("Joans");
+        testName.add("Ulla");
+        testName.add("Åke");
+
+        //casta om araylist till array
+        //String[] testNameArray = new String[testName.size()];
+        //listItems = testNameArray;
+
+        //checkedItems = new boolean[listItems.length];
+
+        /*adapter = new PhoneBookContacts(this.context, testName);
+
+        // Attach the adapter to a diaListView
+        diaListView = (ListView) diaView.findViewById(R.id.list_add_friends);
+        diaListView.setAdapter(adapter);*/
+
+        //builder1.setView(diaView);
+
+        listItems = context.getResources().getStringArray(R.array.shopping_item);
+        checkedItems = new boolean[listItems.length];
+
+        builder1.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+
+                Log.d("tag", "Dialog klick på vänner");
+//                        if (isChecked) {
+//                            if (!mUserItems.contains(position)) {
+//                                mUserItems.add(position);
+//                            }
+//                        } else if (mUserItems.contains(position)) {
+//                            mUserItems.remove(position);
+//                        }
+                /*if(isChecked){
+                    mUserItems.add(position);
+                }else{
+                    mUserItems.remove((Integer.valueOf(position)));
+                }*/
+            }
+        });
+
+
+
+
         builder1.setPositiveButton(
                 "Klar",
                 new DialogInterface.OnClickListener() {
@@ -82,105 +161,144 @@ public class DialogAddFriend{
                 });
 
 
-        AlertDialog alertChoseDistans = builder1.create();
-        alertChoseDistans.show();
-    }
-
-    public void setFriendList(View view){
-
-        Cursor contacts = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        String aNameFromContacts[] = new String[contacts.getCount()];
-        String aNumberFromContacts[] = new String[contacts.getCount()];
-
-
-
-        int i = 0;
-
-        //int nameFieldColumnIndex = contacts.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
-        //int numberFieldColumnIndex = contacts.getColumnIndex(ContactsContract.PhoneLookup.NUMBER);
-
-        //String name = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-        //int number = contacts.getInt(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-        int name = contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int number = contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-
-        while(contacts.moveToNext()) {
-
-            String contactName = contacts.getString(name);
-            //aNameFromContacts[i] =    contactName ;
-            nameFromContacts.add(contactName);
-
-            //String number = contacts.getString(numberFieldColumnIndex);
-            //aNumberFromContacts[i] =    number ;
-            i++;
-        }
-
-        contacts.close();
-
-
-        Log.d("tag", "setFriendList: nameFromContacts " + nameFromContacts.size());
-
-        // Construct the data source// Create the adapter to convert the array to views
-        PhoneBookContacts adapter = new PhoneBookContacts(this.context, nameFromContacts);
-
-        Log.d("tag", "setFriendList: adapter " + adapter);
-
-        // Attach the adapter to a ListView
-        ListView listView = (ListView) view.findViewById(R.id.list_add_friends);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        builder1.setNeutralButton("Rensa val", new DialogInterface.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("tag", " click på en kontakt");
-
+            public void onClick(DialogInterface dialogInterface, int which) {
+                Log.d("tag", "Rensa val");
+                /*for (int i = 0; i < checkedItems.length; i++) {
+                    checkedItems[i] = false;
+                    mUserItems.clear();
+                    mItemSelected.setText("");
+                }*/
             }
         });
 
 
-
-
-        /*ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.add_friend_list_item, aNameFromContacts);
-
-        ListView listView = (ListView) friendHandler.findViewById(R.id.list_add_friends);
-
-        listView.setAdapter(itemsAdapter);*/
-
-
-        //Intent[] picList;
-        /*ArrayList<Integer> picList = new ArrayList<Integer>();
-
-        if(thisUser.friendAllowed != null) {
-            for (Person personB : thisUser.friendAllowed) {
-                picList.add(personB.getPic());
-
-            }
-        }*/
-
-        //List<String> names = new ArrayList<String>();
-        //Integer[] picListArray = picList.toArray(new Integer[picList.size()]);
-
-
-
-        /*if (adapter == null) {
-            Log.d("tag", "createList adapter NULL");
-            adapter = new FriendListContiner(friendHandler, picListArray, thisUser.friendAllowed);
-
-            listView = (ListView) friendHandler.findViewById(R.id.list_add_friends);
-            listView.setAdapter(adapter);
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("tag", " click på en vän");
-
-                    //dialogViewListFriend.showDialogViewListFriend(getWindow().getContext());
-
-                }
-            });
-
-        }*/
+        AlertDialog alertAddFriends = builder1.create();
+        alertAddFriends.show();
     }
+
+
+
+
+
+
+//
+//
+//
+//
+//    public void getAllDatabasNumber(final View diaView){
+//
+//        final ArrayList<String> allDataBasPhoneNum = new ArrayList<String>();
+//
+//        //endast en gång, sätter användarens starvärden.
+//        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                Log.d("tag", "_____-----------MMMMMMMMMMMM----------->>>>>>>>>>>>>>>>>>");
+//
+//                for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
+//                    Person personB = snap.getValue(Person.class);
+//                    allDataBasPhoneNum.add(personB.getPhoneNumber());
+//                }
+//
+//                setUpList(diaView, allDataBasPhoneNum);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//    }
+//
+//    public void setUpList(View diaView, ArrayList<String> allDataBasPhoneNum){
+//
+//        Cursor contacts = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+//        String aNameFromContacts[] = new String[contacts.getCount()];
+//        String aNumberFromContacts[] = new String[contacts.getCount()];
+//
+//
+//        int i = 0;
+//
+//        //int nameFieldColumnIndex = contacts.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
+//        //int numberFieldColumnIndex = contacts.getColumnIndex(ContactsContract.PhoneLookup.NUMBER);
+//
+//        int name = contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+//        int number = contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//
+//        Log.d("tag", "setFriendList: allDataBasPhoneNum " + allDataBasPhoneNum);
+//
+//        while(contacts.moveToNext()) {
+//
+//            String contactName = contacts.getString(name);
+//            String contactNumber = contacts.getString(number);
+//            Log.d("tag", "setFriendList: allDataBasPhoneNum " + allDataBasPhoneNum);
+//            Log.d("tag", "setFriendList: contactNumber " + contactName + "   " + contactNumber);
+//
+//            if(allDataBasPhoneNum.contains(contactNumber) && !tempArrayNotDoubleNumber.contains(contactNumber)) {
+//                Log.d("tag", "Tjuttt tjuuuuuuuttttttttttt--------->>>>>" + tempArrayNotDoubleNumber);
+//                tempArrayNotDoubleNumber.add(contactNumber);
+//                nameFromContacts.add(contactName);
+//            }
+//
+//            i++;
+//        }
+//
+//        contacts.close();
+//
+//
+//        // Construct the data source// Create the adapter to convert the array to views
+//        adapter = new PhoneBookContacts(this.context, nameFromContacts);
+//
+//        // Attach the adapter to a diaListView
+//        diaListView = (ListView) diaView.findViewById(R.id.list_add_friends);
+//        diaListView.setAdapter(adapter);
+//
+//
+//
+//        /*diaListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Log.d("tag", " click på en vän");
+//
+//            }
+//
+//
+//        });*/
+//
+//
+//        /*builder1.setAdapter(adapter, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Log.d("tag", " click på en vän");
+//                /*String strName = adapter.getItem(which);
+//                AlertDialog.Builder builderInner = new AlertDialog.Builder(DialogActivity.this);
+//                builderInner.setMessage(strName);
+//                builderInner.setTitle("Your Selected Item is");
+//                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog,int which) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//                builderInner.show();*/
+//           /* }
+//        });*/
+//
+//
+//
+//
+//
+//    }
+//
+//    public void test(View view){
+//        Log.d("tag", "test: cliclcilckcilciclcilciclc");
+//    }
+
+
 
 
 }

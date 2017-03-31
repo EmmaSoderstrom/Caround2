@@ -10,58 +10,44 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
 <include layout="@layout/toolbar"
     android:id="@+id/toolbar"/>
 
-<RelativeLayout
-    android:id="@+id/top_text_continer"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/toolbar"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginLeft="16dp">
-
-    <TextView
-        android:id="@+id/text_number_of_friends"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/top_text_continer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="56dp"
-        android:text="text_number_of_friends"
-        />
-    <TextView
-        android:id="@+id/text_distans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="distans"
-        android:layout_alignParentRight="true"
-        />
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp">
 
-    <!--
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text1"
-        android:text="Hej hej!" />
-        -->
+        <TextView
+            android:id="@+id/text_number_of_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="56dp"
+            android:text="text_number_of_friends"
+            />
+        <TextView
+            android:id="@+id/text_distans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="distans"
+            android:layout_alignParentRight="true"
+            />
 
-</RelativeLayout>
+    </RelativeLayout>
 
 
-<ListView
-    android:id="@+id/list_close_friends"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:layout_below="@id/top_text_continer">
+    <ListView
+        android:id="@+id/list_close_friends"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@id/top_text_continer">
 
 
-</ListView>
+    </ListView>
 
 <!--
 <Button
@@ -71,12 +57,12 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
     android:layout_alignParentBottom="true"/>
 -->
 
-<RelativeLayout
-    android:id="@+id/frien_list_layout"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:background="#ce0b0b">
+    <RelativeLayout
+        android:id="@+id/frien_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#ce0b0b">
 
-</RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

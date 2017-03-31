@@ -192,22 +192,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void creatFakeUser(){
         Log.d("tag", "creatFakeUser ");
 
-        writeNewUser("id1", "Jonas", "Amnesten", 10000, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id2", "Mamma", "Pappa", 10500, true, 59.35460399999999, 18.282052499999963);
-        writeNewUser("id3", "Slussen", "Slussen", 1000, true, 59.31951240000001, 18.07214060000001);
-        writeNewUser("id4", "Karolinska", "Instutet", 2000, true, 59.34814839999999, 18.023657800000024);
-        writeNewUser("id5", "EmmaNot", "Söderström", 1550, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id6", "JonasNot", "Amnesten", 10000, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id7", "MammaNot", "Pappa", 10500, true, 59.35460399999999, 18.282052499999963);
-        writeNewUser("id8", "SlussenNot", "Slussen", 1000, true, 59.31951240000001, 18.07214060000001);
-        writeNewUser("id9", "KarolinskaNot", "Instutet", 2000, true, 59.34814839999999, 18.023657800000024);
-        writeNewUser("id10", "EmmaNot", "Söderström", 1550, true, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id1", "Jonas2", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id2", "Ulla", "Söderström", "0707324181", 10500, true, 59.35460399999999, 18.282052499999963);
+        writeNewUser("id3", "Patrik", "Slussen", "0739168234", 1000, true, 59.31951240000001, 18.07214060000001);
+        writeNewUser("id4", "Karolinska", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
+        writeNewUser("id5", "Emma", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id6", "JonasNot", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
+        writeNewUser("id7", "UllaNot", "Södersröm", "12345", 10500, true, 59.35460399999999, 18.282052499999963);
+        writeNewUser("id8", "SlussenNot", "Slussen", "12345", 1000, true, 59.31951240000001, 18.07214060000001);
+        writeNewUser("id9", "KarolinskaNot", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
+        writeNewUser("id10", "EmmaNot", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
 
     }
 
-    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn,
+    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistans, boolean startSignedIn,
                               double startLocationLatitude, double startLocationLongitude) {
-        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans, startSignedIn,
+        Person personClass = new Person(startPersonId, startFirstName, startLastName, startPhoneNumber, startChosenDistans,
                 startLocationLatitude, startLocationLongitude);
 
         personList.allPersonArrayList.add(personClass);

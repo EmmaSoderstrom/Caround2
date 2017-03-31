@@ -57,12 +57,13 @@ public class Person {
 
     }
 
-    public Person(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn,
+    public Person(String startPersonId, String startFirstName, String startLastName,  String startPhoneNumber, int startChosenDistans,
                   double startLocationLatitude, double startLocationLongitude){
 
         personId = startPersonId;
         firstName = startFirstName;
         lastName = startLastName;
+        phoneNumber = startPhoneNumber;
         chosenDistance = startChosenDistans;
         locationLatitude = startLocationLatitude;
         locationLongitude = startLocationLongitude;
