@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 startLocationLatitude, startLocationLongitude);
 
         personList.allPersonArrayList.add(personClass);
-        mDatabase.child("users").child(startFirstName).setValue(personClass);
+        mDatabase.child("users").child(startPersonId).setValue(personClass);
 
     }
 

@@ -29,6 +29,7 @@ public class Person {
     int distansBetween;
 
     ArrayList<Person> friendRequests = new ArrayList<Person>();
+    ArrayList<String> friendRequestsId = new ArrayList<String>();
     ArrayList<Person> friendAllowed = new ArrayList<Person>();
 
     /*Uri userPicURI;
@@ -157,6 +158,14 @@ public class Person {
 
     public void setFriendRequests(ArrayList<Person> friendRequests) {
         this.friendRequests = friendRequests;
+    }
+
+    public ArrayList<String> getFriendRequestsId() {
+        return friendRequestsId;
+    }
+
+    public void addFriendRequests(String reqFriendId){
+        friendRequestsId.add(reqFriendId);
     }
 
     public ArrayList<Person> getFriendAllowed() {

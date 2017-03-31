@@ -98,6 +98,8 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         InputFilter[] textLenght= new InputFilter[1];
         textLenght[0] = new InputFilter.LengthFilter(20);
+        InputFilter[] phoneNumberLenght= new InputFilter[1];
+        phoneNumberLenght[0] = new InputFilter.LengthFilter(10);
 
         firstName = (EditText)findViewById(R.id.creat_user_firstname);
         firstName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -109,6 +111,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         telNumber = (EditText)findViewById(R.id.creat_user_telnumber);
         telNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+        telNumber.setFilters(phoneNumberLenght);
 
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
