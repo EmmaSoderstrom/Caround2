@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by User on 2017-03-02.
  */
 
-public class FriendListContiner extends ArrayAdapter<Person> {
+public class FriendListContiner extends ArrayAdapter<String> {
 
     private final Activity context;
 
@@ -22,11 +22,11 @@ public class FriendListContiner extends ArrayAdapter<Person> {
     private final String name;
     private final String distance;
     //private final Person[] person;
-    private ArrayList<Person> person;
+    private ArrayList<String> person;
 
 
 
-    public FriendListContiner(Activity context, Integer[] startPic, ArrayList<Person> startPerson) {
+    public FriendListContiner(Activity context, Integer[] startPic, ArrayList<String> startPerson) {
         super(context, R.layout.list_item, startPerson);
 
         this.context = context;
@@ -43,7 +43,7 @@ public class FriendListContiner extends ArrayAdapter<Person> {
     }
 
     @Override
-    public Person getItem(int position) {
+    public String getItem(int position) {
         return person.get(position);
     }
 
@@ -78,12 +78,12 @@ public class FriendListContiner extends ArrayAdapter<Person> {
         //textNameView.setText(name[position]);
         //textDistansView.setText(distance[position]);
 
-        textNameView.setText(person.get(position).getFullName());
+        //textNameView.setText(person.get(position).getFullName());
 
         /*panelDistansM = getString(R.string.panel_distans_m);
         panelDistansKm = getString(R.string.panel_distans_km);
         panelDistansMil = getString(R.string.panel_distans_mil);*/
-        int thisUserDistans = person.get(position).getDistansBetween();
+        //int thisUserDistans = person.get(position).getDistansBetween();
         int distansConverted;
         String distansValue;
 
@@ -102,7 +102,7 @@ public class FriendListContiner extends ArrayAdapter<Person> {
             distansValue = "mil";
         }*/
 
-        if (thisUserDistans < 1000) {
+        /**if (thisUserDistans < 1000) {
             distansConverted = thisUserDistans;
             distansValue = panelDistansM;
 
@@ -118,7 +118,7 @@ public class FriendListContiner extends ArrayAdapter<Person> {
             distansValue = panelDistansMil;
 
             textDistansView.setText(distansConverted + " " + distansValue);
-        }
+        }*/
 
         //textDistansView.setText(distansConverted + " " + distansValue);
 

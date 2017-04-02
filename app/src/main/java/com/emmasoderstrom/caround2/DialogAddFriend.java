@@ -87,6 +87,10 @@ public class DialogAddFriend{
                 for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
                     Person personB = snap.getValue(Person.class);
                     allDataBasPhoneNum.add(personB.getPhoneNumber());
+
+                    if(personB.getPersonId().equals(thisUserID)){
+                        thisUser = personB;
+                    }
                 }
 
                 setUpArray(allDataBasPhoneNum);
@@ -147,7 +151,9 @@ public class DialogAddFriend{
 
     public void addContactToList(ArrayList<String> allDataBasPhoneNum, String contactNumber, String contactName){
 
-        if((allDataBasPhoneNum.contains(contactNumber)) && !tempArrayNotDoubleNumber.contains(contactNumber)) {
+        if((allDataBasPhoneNum.contains(contactNumber))
+                && !tempArrayNotDoubleNumber.contains(contactNumber)
+                && !thisUser.friendSendedRequests.contains(contactNumber)) {
             Log.d("tag", "Tjuttt tjuuuuuuuttttttttttt--------->>>>>" + tempArrayNotDoubleNumber);
             tempArrayNotDoubleNumber.add(contactNumber);
             nameFromContacts.add(contactName);
@@ -249,6 +255,8 @@ public class DialogAddFriend{
                     if(checktContacktsPhoneNumber.contains(personB.getPhoneNumber())){
                         personB.addFriendRequests(thisUserID);
                         mDatabase.child("users").child(personB.getPersonId()).child("friendRequestsId").setValue(personB.getFriendRequestsId());
+                        thisUser.addFriendSendedRequests(personB.getPhoneNumber());
+                        mDatabase.child("users").child(thisUserID).child("friendSendedRequests").setValue(thisUser.getFriendSendedRequests());
                     }
                 }
 

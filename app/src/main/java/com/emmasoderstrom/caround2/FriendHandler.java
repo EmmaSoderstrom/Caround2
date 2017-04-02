@@ -131,8 +131,8 @@ public class FriendHandler extends AppCompatActivity {
         ArrayList<Integer> picList = new ArrayList<Integer>();
 
         if(thisUser.friendAllowed != null) {
-            for (Person personB : thisUser.friendAllowed) {
-                picList.add(personB.getPic());
+            for (String personB : thisUser.friendAllowed) {
+                //picList.add(personB.getPic());
 
             }
         }

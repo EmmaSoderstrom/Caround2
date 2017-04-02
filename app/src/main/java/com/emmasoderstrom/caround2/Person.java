@@ -30,7 +30,8 @@ public class Person {
 
     ArrayList<Person> friendRequests = new ArrayList<Person>();
     ArrayList<String> friendRequestsId = new ArrayList<String>();
-    ArrayList<Person> friendAllowed = new ArrayList<Person>();
+    ArrayList<String> friendSendedRequests = new ArrayList<String>();
+    ArrayList<String> friendAllowed = new ArrayList<String>();
 
     /*Uri userPicURI;
     Bitmap userBitmap;*/
@@ -40,7 +41,9 @@ public class Person {
 
     }
 
-    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistance){
+    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName,
+                  String startPhoneNumber, int startChosenDistance,
+                  ArrayList<String> friendRequestsId, ArrayList<String> friendSendedRequests, ArrayList<String> friendAllowed){
 
         personId = startPersonId;
         userPic = startUserPic;
@@ -55,6 +58,10 @@ public class Person {
         lastName = startLastName;
         phoneNumber = startPhoneNumber;
         chosenDistance = startChosenDistance;
+
+        this.friendRequestsId = friendRequestsId;
+        this.friendSendedRequests = friendSendedRequests;
+        this.friendAllowed = friendAllowed;
 
     }
 
@@ -168,11 +175,19 @@ public class Person {
         friendRequestsId.add(reqFriendId);
     }
 
-    public ArrayList<Person> getFriendAllowed() {
+    public ArrayList<String> getFriendSendedRequests() {
+        return friendSendedRequests;
+    }
+
+    public void addFriendSendedRequests(String sendReqFriendId){
+        friendSendedRequests.add(sendReqFriendId);
+    }
+
+    public ArrayList<String> getFriendAllowed() {
         return friendAllowed;
     }
 
-    public void setFriendAllowed(ArrayList<Person> friendAllowed) {
+    public void setFriendAllowed(ArrayList<String> friendAllowed) {
         this.friendAllowed = friendAllowed;
     }
 

@@ -58,6 +58,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     String thisUserID;
+    Person thisUser;
 
     ImageView userImeageView;
     Uri userPic;
@@ -118,6 +119,8 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+
+                //kollar om det finns användare redan
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
                     Person user = snap.getValue(Person.class);
                     String userId = user.getPersonId();
@@ -126,6 +129,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                         firstName.setText(user.getFirstName());
                         lastName.setText(user.getLastName());
                         telNumber.setText(user.getPhoneNumber());
+                        thisUser = user;
 
                         break;
                     }
@@ -156,17 +160,30 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 && !lastName.getText().toString().isEmpty()
                 && !telNumber.getText().toString().isEmpty()){
 
-            //Skapa och lagra denna nya användare i databasen
 
-            //conventerar bil UIR till sträng så databasen kan ta imot den
-            String picString = userPic.toString();
+            if(thisUser == null) {
+                //Skapa och lagra denna nya användare i databasen
 
-            Person personA = new Person(thisUserID, picString, firstName.getText().toString(), lastName.getText().toString(),telNumber.getText().toString(), 6000);
-            mDatabase.child("users").child(thisUserID).setValue(personA);
+                //conventerar bil UIR till sträng så databasen kan ta imot den
+                String picString = userPic.toString();
+
+                Person personA = new Person(thisUserID, picString,
+                        firstName.getText().toString(), lastName.getText().toString(),
+                        telNumber.getText().toString(), 6000,
+                        null, null, null);
+
+                mDatabase.child("users").child(thisUserID).setValue(personA);
+
+            }else{
+                mDatabase.child("users").child(thisUserID).child("firstName").setValue(firstName.getText().toString());
+                mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
+                mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());
+            }
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(EXTRA_MESSAGE, thisUserID);
             startActivity(intent);
+
         }
     }
 
