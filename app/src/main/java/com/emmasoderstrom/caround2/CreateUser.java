@@ -20,9 +20,11 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +42,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -66,6 +71,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
     EditText firstName;
     EditText lastName;
+    Spinner spinnerCountry;
     EditText telNumber;
 
 
@@ -80,14 +86,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        Log.d("tag", "onCreate: getProviderId " + user.getProviderId());
-        Log.d("tag", "onCreate: getProviderId " + user.getUid());
-        Log.d("tag", "onCreate: getProviderId " + user.getDisplayName());
-        Log.d("tag", "onCreate: getProviderId " + user.getProviderId());
-
+        //hämtar google bild och sätter användar bild
         if (user != null) {
             userPic = user.getPhotoUrl();
             String userPicS = userPic.toString();
@@ -110,6 +111,33 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         lastName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         lastName.setFilters(textLenght);
 
+
+        Locale[] locale = Locale.getAvailableLocales();
+        ArrayList<String> countries = new ArrayList<String>();
+        String country;
+        for( Locale loc : locale ){
+            country = loc.getDisplayCountry();
+            if( country.length() > 0 && !countries.contains(country) ){
+                countries.add( country );
+            }
+        }
+        Collections.sort(countries, String.CASE_INSENSITIVE_ORDER);
+
+        spinnerCountry = (Spinner)findViewById(R.id.spinner_country);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, countries);
+        spinnerCountry.setAdapter(adapter);
+
+        String phoneCountry = Locale.getDefault().getDisplayCountry();
+
+        Log.d("tag", "onCreate: phoneCountrie " + phoneCountry);
+        for (int i = 0; i < countries.size(); i++) {
+            Log.d("tag", "onCreate: phoneCountrie " + countries.get(i));
+            if(countries.get(i).equalsIgnoreCase(phoneCountry)){
+                spinnerCountry.setSelection(i);
+                break;
+            }
+        }
+
         telNumber = (EditText)findViewById(R.id.creat_user_telnumber);
         telNumber.setInputType(InputType.TYPE_CLASS_PHONE);
         telNumber.setFilters(phoneNumberLenght);
@@ -118,7 +146,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
 
                 //kollar om det finns användare redan
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
@@ -167,9 +194,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 //conventerar bil UIR till sträng så databasen kan ta imot den
                 String picString = userPic.toString();
 
-                Person personA = new Person(thisUserID, picString,
+                Person personA = new Person(userPic.toString(), thisUserID,
                         firstName.getText().toString(), lastName.getText().toString(),
-                        telNumber.getText().toString(), 6000,
+                        spinnerCountry.getSelectedItem().toString(), telNumber.getText().toString(), 6000,
                         null, null, null);
 
                 mDatabase.child("users").child(thisUserID).setValue(personA);

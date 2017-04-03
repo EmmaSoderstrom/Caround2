@@ -27,7 +27,7 @@ public class FriendListContiner extends ArrayAdapter<String> {
 
 
     public FriendListContiner(Activity context, Integer[] startPic, ArrayList<String> startPerson) {
-        super(context, R.layout.list_item, startPerson);
+        super(context, R.layout.main_list_item, startPerson);
 
         this.context = context;
         pic = startPic;
@@ -59,7 +59,7 @@ public class FriendListContiner extends ArrayAdapter<String> {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = (View) inflater.inflate(R.layout.list_item, null,true);
+            rowView = (View) inflater.inflate(R.layout.main_list_item, null,true);
         } else {
             rowView = (View) convertView;
         }

@@ -35,12 +35,22 @@
         android:layout_below="@+id/creat_user_firstname"
         android:layout_marginBottom="20dp"/>
 
+    <Spinner
+        android:id="@+id/spinner_country"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/creat_user_lastname"
+        android:layout_marginBottom="20dp"
+        android:textSize="15sp"/>
+
     <EditText
         android:id="@+id/creat_user_telnumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/creat_user_telnumber"
-        android:layout_below="@id/creat_user_lastname"/>
+        android:layout_below="@id/spinner_country" />
 
     <!--<Button-->
         <!--android:id="@+id/creat_user_done"-->

@@ -6,8 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.widget.ImageView;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -15,12 +18,12 @@ import java.util.ArrayList;
  */
 public class Person {
 
+    String picString;
     String personId;
-    String userPic;
-    Integer pic = R.drawable.ball;
     String firstName;
     String lastName;
     String fullName;
+    String country;
     String phoneNumber;
     int chosenDistance;
     Location location;
@@ -33,29 +36,20 @@ public class Person {
     ArrayList<String> friendSendedRequests = new ArrayList<String>();
     ArrayList<String> friendAllowed = new ArrayList<String>();
 
-    /*Uri userPicURI;
-    Bitmap userBitmap;*/
-
-
     public Person(){
 
     }
 
-    public Person(String startPersonId, String startUserPic, String startFirstName, String startLastName,
-                  String startPhoneNumber, int startChosenDistance,
+    public Person(String picString, String personId, String startFirstName, String startLastName,
+                  String country, String startPhoneNumber, int startChosenDistance,
                   ArrayList<String> friendRequestsId, ArrayList<String> friendSendedRequests, ArrayList<String> friendAllowed){
 
-        personId = startPersonId;
-        userPic = startUserPic;
-
-
-        //Uri myUri = Uri.parse(startUserPic);
-        /*String userPicS = startUserPic.toString();
-        Bitmap userPicBitmap = doInBackground(userPicS);
-        pic = userPicBitmap;*/
+        this.picString = picString;
+        this.personId = personId;
 
         firstName = startFirstName;
         lastName = startLastName;
+        this.country = country;
         phoneNumber = startPhoneNumber;
         chosenDistance = startChosenDistance;
 
@@ -78,20 +72,12 @@ public class Person {
 
     }
 
+    public String getPicString() {
+        return picString;
+    }
+
     public String getPersonId(){
         return personId;
-    }
-
-    public Integer getPic(){
-        return pic;
-    }
-
-    public String getUserPic() {
-        return userPic;
-    }
-
-    public void setUserPic(String userPic) {
-        this.userPic = userPic;
     }
 
     public String getFirstName(){
@@ -105,6 +91,10 @@ public class Person {
     public String getFullName(){
         fullName = firstName + " " + lastName;
         return fullName;
+    }
+
+    public String getCountry() {
+        return country;
     }
 
     public String getPhoneNumber() {
@@ -191,23 +181,5 @@ public class Person {
         this.friendAllowed = friendAllowed;
     }
 
-
-       /* public Bitmap doInBackground(String... URL) {
-
-            //String image = userPic.toString();
-            String imageURL = URL[0];
-
-            Bitmap bitmap = null;
-            try {
-                // Download Image from URL
-                InputStream input = new java.net.URL(imageURL).openStream();
-                // Decode Bitmap
-                bitmap = BitmapFactory.decodeStream(input);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            userBitmap = bitmap;
-            return bitmap;
-        }*/
 
 }

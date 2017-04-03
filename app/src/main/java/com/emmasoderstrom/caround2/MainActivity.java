@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -87,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String panelDistansMil;
 
     PersonList personList;
-    ListContiner adapter;
+    //ListContiner adapter;
+    MainListContiner adapter;
     ListView listView = null;
     String thisPersonPhoneId;
 
@@ -101,14 +103,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
-        //thisUserID = 1;
-
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
         thisPersonPhoneId = message;
         thisUserID = message;
         Log.d("tag", "onCreate: " + message);
+        Log.d("tag", "onCreate: thisUserID " + thisUserID);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mapApiCreat();
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
         //sker när något ändras på denna användarens databas värden
-        mDatabase.child("users").child(thisPersonPhoneId).addValueEventListener(new ValueEventListener() {
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
@@ -272,8 +273,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
-                FirebaseAuth.getInstance().signOut();
+                //FirebaseAuth.getInstance().signOut();
                 //Auth.GoogleSignInApi.signOut();
+
+                /*GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        .enableAutoManage(this, this)
+                        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                        .build();
+
+                mGoogleApiClient.connect();
+
+                if(mGoogleApiClient.isConnected()){
+                    Log.d("tag", "mGoogleApiClient conecktad");
+                    FirebaseAuth.getInstance().signOut();
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                }else{
+                    Log.d("tag", "mGoogleApiClient inte conecktad");
+                }*/
+
+                //if (view == buttonLogout) {
+                    //firebaseAuth.signOut();
+                    FirebaseAuth.getInstance().signOut();
+                    finish();
+                    //startActivity(new Intent(this, SignActivity.class));
+                //}
 
                 thisUser = null;
                 intent = new Intent(this, Login.class);
@@ -286,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void updateChosenDistansText(int thisUserDistans){
         chosenDistansInt = thisUserDistans;
+        Log.d("tag", "updateChosenDistansText " + thisUser);
         if(thisUser != null) {
             Log.d("tag", "updateChosenDistansText");
             //int thisUserDistans = thisUser.getChosenDistansInt();
@@ -533,7 +562,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if (adapter == null) {
             Log.d("tag", "createList adapter NULL");
-            adapter = new ListContiner(this, picList, personList.closePersonArrayList);
+            //adapter = new ListContiner(this, picList, personList.closePersonArrayList);
+            adapter = new MainListContiner(this, personList.closePersonArrayList);
 
             listView = (ListView) findViewById(R.id.list_close_friends);
             listView.setAdapter(adapter);

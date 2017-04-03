@@ -1,39 +1,42 @@
 package com.emmasoderstrom.caround2;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
  * Created by User on 2017-03-02.
  */
 
-public class ListContiner extends ArrayAdapter<Person> {
+public class MainListContiner extends ArrayAdapter<Person> {
 
-    private final Activity context;
+    private final Context context;
 
-    private final Integer[] pic;
-    private final String name;
-    private final String distance;
+    //private final Integer[] pic;
+    //private final String name;
+    //private final String distance;
     //private final Person[] person;
     private ArrayList<Person> person;
 
+    ImageView imagePicView;
 
 
-    public ListContiner(Activity context, Integer[] startPic, ArrayList<Person> startPerson) {
-        super(context, R.layout.main_list_item, startPerson);
+
+    public MainListContiner(Context context, ArrayList<Person> startPerson) {
+        super(context, 0, startPerson);
 
         this.context = context;
-        pic = startPic;
         person = startPerson;
-        name = "Hej";
-        distance = "200";
 
     }
 
@@ -64,19 +67,18 @@ public class ListContiner extends ArrayAdapter<Person> {
             rowView = (View) convertView;
         }
 
-        //ImageView imagePicView = (ImageView) rowView.findViewById(R.id.icon);
+        imagePicView = (ImageView) rowView.findViewById(R.id.list_pic);
         TextView textNameView = (TextView) rowView.findViewById(R.id.list_name);
         TextView textDistansView = (TextView) rowView.findViewById(R.id.list_distans);
 
-        //imagePicView.setImageResource(thisPic[position]);
-        //textNameView.setText(name[position]);
-        //textDistansView.setText(distance[position]);
+        //bild
+        String userPicS = person.get(position).getPicString();
+        new DownloadImage().execute(userPicS);
 
+        //text för och efternamn
         textNameView.setText(person.get(position).getFullName());
 
-        /*panelDistansM = getString(R.string.panel_distans_m);
-        panelDistansKm = getString(R.string.panel_distans_km);
-        panelDistansMil = getString(R.string.panel_distans_mil);*/
+        //text distans
         int thisUserDistans = person.get(position).getDistansBetween();
         int distansConverted;
         String distansValue;
@@ -103,9 +105,35 @@ public class ListContiner extends ArrayAdapter<Person> {
             textDistansView.setText(distansConverted + " " + distansValue);
         }
 
-        //textDistansView.setText(distansConverted + " " + distansValue);
-        //textDistansView.setText(String.valueOf(person.get(position).getDistansBetween()));
-
         return rowView;
     }
+
+
+    // DownloadImage AsyncTask
+    private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... URL) {
+
+            String imageURL = URL[0];
+
+            Bitmap bitmap = null;
+            try {
+                // Download Image from URL
+                InputStream input = new java.net.URL(imageURL).openStream();
+                // Decode Bitmap
+                bitmap = BitmapFactory.decodeStream(input);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            imagePicView.setImageBitmap(result);
+        }
+    }
+
+
 }

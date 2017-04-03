@@ -3,6 +3,7 @@ package com.emmasoderstrom.caround2;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -23,6 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.emmasoderstrom.caround2.MainActivity.MyPREFERENCES;
+import static com.emmasoderstrom.caround2.MainActivity.USER_ID_KEY;
+import static com.emmasoderstrom.caround2.MainActivity.sharedPreferences;
+
 /**
  * Created by User on 2017-03-10.
  */
@@ -31,7 +36,8 @@ public class DialogChangeDistansOneWheel {
 
     MainActivity mainActivity;
     Person thisUser;
-    //String oldChosenDistansText;
+    static String thisUserID;
+
 
     TabHost host;
     NumberPicker wheelNumberDistansM;
@@ -56,6 +62,9 @@ public class DialogChangeDistansOneWheel {
     }
 
     public void showDialogChangeDistans(Context context, int startOldChosenDistans) {
+
+        thisUserID = MainActivity.thisUserID;
+        Log.d("tag", "onCreate: thisUserID " + thisUserID);
 
         oldChosenDistans = startOldChosenDistans;
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
@@ -152,11 +161,6 @@ public class DialogChangeDistansOneWheel {
 
         //sätter den rätta hjulet som vissas för användaren utifrån det nuvarande valda distansen
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        /*if(thisUser != null) {
-            Log.d("tag", "oldChosenDistans" + oldChosenDistans);
-            oldChosenDistans = oldChosenDistans;
-        }*/
-        //oldChosenDistansText = (String) mainActivity.chosenDistansText.getText();
         oldChosenDistansText = (String) mainActivity.chosenDistansText.getText();
 
         Log.d("tag", "oldChosenDistans" + oldChosenDistans);
@@ -220,23 +224,23 @@ public class DialogChangeDistansOneWheel {
                                 chosenvalueInM = chosenNumber.intValue();
                                 Log.d("tag"," tag 1 +  m " + chosenvalueInM);
                                 //thisUser.setChosenDistans(chosenvalueInM);
-                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
-                                mainActivity.updateChosenDistansText(chosenvalueInM);
+                                mDatabase.child("users").child(thisUserID).child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.setThisUser();
                                 break;
                             case 1:
                                 Double chosenvalueInMTemp = chosenNumber * 1000;
                                 chosenvalueInM = chosenvalueInMTemp.intValue();
                                 Log.d("tag"," tag 2 + km " + chosenvalueInM);
                                 //thisUser.setChosenDistans(chosenvalueInM);
-                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
-                                mainActivity.updateChosenDistansText(chosenvalueInM);
+                                mDatabase.child("users").child(thisUserID).child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.setThisUser();
                                 break;
                             case 2:
                                 chosenvalueInM = chosenNumber.intValue() * 10000;
                                 Log.d("tag"," tag 3 + mil " + chosenvalueInM);
                                 //thisUser.setChosenDistans(chosenvalueInM);
-                                mDatabase.child("users").child("afe233b5e9ebeb00").child("chosenDistansInt").setValue(chosenvalueInM);
-                                mainActivity.updateChosenDistansText(chosenvalueInM);
+                                mDatabase.child("users").child(thisUserID).child("chosenDistansInt").setValue(chosenvalueInM);
+                                mainActivity.setThisUser();
                                 break;
                         }
 
