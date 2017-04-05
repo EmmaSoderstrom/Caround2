@@ -102,14 +102,14 @@ public class PersonList extends ArrayAdapter<ListContiner> {
         return personClosePersonArray;
     }
 
-    public Integer[] personPicArrayListToArray(){
+   /* public Integer[] personPicArrayListToArray(){
         for (int i = 0; i < closePersonArrayList.size(); i++) {
             personPicArrayList.add(closePersonArrayList.get(i).getPic());
         }
         Integer[] personPicArray = personPicArrayList.toArray(new Integer[personPicArrayList.size()]);
 
         return personPicArray;
-    }
+    }*/
 
     public String[] personFullNameArrayListToArray(){
         for (int i = 0; i < closePersonArrayList.size(); i++) {

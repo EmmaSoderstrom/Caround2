@@ -1,36 +1,22 @@
 package com.emmasoderstrom.caround2;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,12 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import static android.R.attr.data;
 
 public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
@@ -64,6 +45,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
     String thisUserID;
     Person thisUser;
+    String userPicS;
 
     ImageView userImeageView;
     Uri userPic;
@@ -91,7 +73,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         //hämtar google bild och sätter användar bild
         if (user != null) {
             userPic = user.getPhotoUrl();
-            String userPicS = userPic.toString();
+            userPicS = userPic.toString();
 
             userImeageView = (ImageView)findViewById(R.id.creat_user_pic);
             new DownloadImage().execute(userPicS);
@@ -187,21 +169,24 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 && !lastName.getText().toString().isEmpty()
                 && !telNumber.getText().toString().isEmpty()){
 
-
+            //om använder profil inte finns
             if(thisUser == null) {
                 //Skapa och lagra denna nya användare i databasen
 
                 //conventerar bil UIR till sträng så databasen kan ta imot den
-                String picString = userPic.toString();
+                //String picString = userPic.toString();
 
-                Person personA = new Person(userPic.toString(), thisUserID,
+                Person personA = new Person(userPicS, thisUserID,
                         firstName.getText().toString(), lastName.getText().toString(),
                         spinnerCountry.getSelectedItem().toString(), telNumber.getText().toString(), 6000,
                         null, null, null);
 
                 mDatabase.child("users").child(thisUserID).setValue(personA);
 
-            }else{
+            }
+            //om användar profil redan finns
+            else{
+                mDatabase.child("users").child(thisUserID).child("picString").setValue(userPicS);
                 mDatabase.child("users").child(thisUserID).child("firstName").setValue(firstName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());

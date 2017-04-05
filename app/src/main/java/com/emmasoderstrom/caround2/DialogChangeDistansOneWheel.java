@@ -2,31 +2,17 @@ package com.emmasoderstrom.caround2;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
-import android.widget.TabWidget;
 
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
-import static com.emmasoderstrom.caround2.MainActivity.MyPREFERENCES;
-import static com.emmasoderstrom.caround2.MainActivity.USER_ID_KEY;
-import static com.emmasoderstrom.caround2.MainActivity.sharedPreferences;
 
 /**
  * Created by User on 2017-03-10.

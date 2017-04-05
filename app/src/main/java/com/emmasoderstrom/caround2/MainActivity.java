@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,39 +17,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.maps.android.SphericalUtil;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -70,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     Toolbar toolbar;
     DialogChangeDistansOneWheel dialogChangeDistans;
-    //FriendList friendList;
     //FriendHandler friendHandler;
     DialogViewListFriend dialogViewListFriend;
 
@@ -91,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //ListContiner adapter;
     MainListContiner adapter;
     ListView listView = null;
-    String thisPersonPhoneId;
+    //String thisPersonPhoneId;
 
 
 
@@ -106,17 +90,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
-        thisPersonPhoneId = message;
+        //thisUserID = message;
         thisUserID = message;
         Log.d("tag", "onCreate: " + message);
         Log.d("tag", "onCreate: thisUserID " + thisUserID);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
         mapApiCreat();
+        //checkPermissionGPS();
 
         setToolbar();
         dialogChangeDistans = new DialogChangeDistansOneWheel(this, thisUser);
-        //friendList = new FriendList();
         //friendHandler = new FriendHandler();
         dialogViewListFriend = new DialogViewListFriend();
 
@@ -151,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
 
                     thisUser = dataSnapshot.child("users")
-                            .child(thisPersonPhoneId)
+                            .child(thisUserID)
                             .getValue(Person.class);
                     chosenDistansInt = thisUser.getChosenDistansInt();
                     updateChosenDistansText(chosenDistansInt);
@@ -170,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
-                thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
+                thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
 
                 Log.d("tag", "onDataChange: mDatabase " + mDatabase + " " + thisUser);
                 if(thisUser != null) {
@@ -215,12 +200,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mDatabase.child("users").child(startPersonId).setValue(personClass);
 
     }
-
-    /*private void writeNewUser(String startPersonId, String startFirstName, String startLastName, int startChosenDistans, boolean startSignedIn) {
-        Person personClass = new Person(startPersonId, startFirstName, startLastName, startChosenDistans);
-        mDatabase.child("users").child(startFirstName).setValue(personClass);
-    }*/
-
 
 
 
@@ -350,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * Karta
      */
 
+
     public void mapApiCreat(){
         Log.d("tag", "mapApiCreat");
         //"Skapar" API google map
@@ -380,7 +360,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "onConnected");
 
 
-        //personList.closePersonArrayList.clear();
+        //Kollar permission att använda GPS
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //ActivityCompat.requestPermissions(this, new String[]{
+                    //android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_ACCESS_COURSE_LOCATION);
+            checkPermissionGPS();
+
+        }else{
+            Log.d("tag", "onConnected permission ok");
+
+            startLocationUpdates();
+
+//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//
+//            if(mLastLocation == null){
+//                startLocationUpdates();
+//            }
+//
+//            if (mLastLocation != null) {
+//                onLocationChanged(mLastLocation);
+//            }else {
+//                Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
+//                mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
+//                mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
+//
+//            }
+        }
+
+
+    }
+
+    public void checkPermissionGPS(){
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -389,23 +403,68 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_ACCESS_COURSE_LOCATION);
-        } startLocationUpdates();
-
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if(mLastLocation == null){
-            startLocationUpdates();
-        }
-
-        if (mLastLocation != null) {
-            onLocationChanged(mLastLocation);
-        }else {
-            Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
+        }else{
+            // om inte?
         }
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        RelativeLayout gpsPermissionRView = (RelativeLayout)findViewById(R.id.permission_not_granted);
+
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_COURSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission godkänndes visa dialog add friends.
+
+                    Log.d("tag", "MY_PERMISSION_ACCESS_COURSE_LOCATION: Permission ");
+                    gpsPermissionRView.setVisibility(INVISIBLE);
+                    startLocationUpdates();
+
+
+                } else {
+                    Log.d("tag", "MY_PERMISSION_ACCESS_COURSE_LOCATION: Permission nekas");
+                    //Permission nekades, gör inget.
+
+                    gpsPermissionRView.setVisibility(VISIBLE);
+
+                }
+                return;
+            }
+        }
+    }
+
+
+    public void gpsPermission(View view){
+        checkPermissionGPS();
+    }
+    public void gpsTurnOn(View view){
+
+    }
+
+
+
     protected void startLocationUpdates() {
         Log.d("tag", "startLocationUpdates");
+
+//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//
+//            if(mLastLocation == null){
+//                startLocationUpdates();
+//            }
+//
+//            if (mLastLocation != null) {
+//                onLocationChanged(mLastLocation);
+//            }else {
+//                Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
+//                mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
+//                mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
+//
+//            }
+
         // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -448,8 +507,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             Log.d("tag", " thisUser OK Sätter GPS");
             //thisUser.setLocationLatitude(location.getLatitude());
             //thisUser.setLocationLongitude(location.getLongitude());
-            mDatabase.child("users").child(thisPersonPhoneId).child("locationLatitude").setValue(location.getLatitude());
-            mDatabase.child("users").child(thisPersonPhoneId).child("locationLongitude").setValue(location.getLongitude());
+            mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
+            mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
             //updateListOfClosePerson();
 
@@ -487,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                thisUser = dataSnapshot.child("users").child(thisPersonPhoneId).getValue(Person.class);
+                thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
                 ArrayList<String> closePersonIdList = new ArrayList<String>();
 
                 //kollar alla användare i databasen
@@ -507,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
                     //läggs personB till i personList.closePersonArrayList
                     if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
-                        && !thisPersonPhoneId.equals(personB.getPersonId())) {
+                        && !thisUserID.equals(personB.getPersonId())) {
 
                         if(!closePersonIdList.contains(personB.getPersonId())) {
                             personB.setDistansBetween(distanceInM);
@@ -557,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void createList() {
         Log.d("tag", "createList");
 
-        Integer[] picList = personList.personPicArrayListToArray();
+        //Integer[] picList = personList.personPicArrayListToArray();
         //Person[] closePersonList = personList.personClosePersonArrayListToArray();
 
         if (adapter == null) {

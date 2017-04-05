@@ -1,16 +1,7 @@
 package com.emmasoderstrom.caround2;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.widget.ImageView;
 
-import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -59,7 +50,7 @@ public class Person {
 
     }
 
-    public Person(String startPersonId, String startFirstName, String startLastName,  String startPhoneNumber, int startChosenDistans,
+    public Person(String startPersonId, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistans,
                   double startLocationLatitude, double startLocationLongitude){
 
         personId = startPersonId;

@@ -45,7 +45,7 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:id="@+id/friend_no_friend"
+                        android:id="@+id/friend_if_friend"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -56,6 +56,15 @@
                             android:layout_centerVertical="true"
                             android:text="Inga vänner"
                             android:textSize="40sp"/>
+
+                        <ListView
+                            android:id="@+id/list_all_friends"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_centerVertical="true">
+                        </ListView>
+
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -67,7 +76,7 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:id="@+id/friend_no_friend_reqest"
+                        android:id="@+id/friend_if_friend_reqest"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -78,6 +87,15 @@
                             android:layout_centerVertical="true"
                             android:text="Inga vänförfrågningar"
                             android:textSize="40sp"/>
+
+                        <ListView
+                            android:id="@+id/list_request_friends"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_centerVertical="true">
+                        </ListView>
+
                     </RelativeLayout>
 
                 </LinearLayout>

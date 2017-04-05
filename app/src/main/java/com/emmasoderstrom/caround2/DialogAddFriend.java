@@ -1,24 +1,15 @@
 package com.emmasoderstrom.caround2;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ListView;
-import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.Toast;
 
 
 import com.google.firebase.database.DataSnapshot;
@@ -27,7 +18,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -38,6 +28,7 @@ public class DialogAddFriend{
 
 
     static String thisUserID;
+
 
     Context context;
     private DatabaseReference mDatabase;
@@ -62,14 +53,17 @@ public class DialogAddFriend{
 
         thisUserID = MainActivity.thisUserID;
 
+
     }
 
-    public void showDialogAddFriend(Context sContext) {
+    public void showDialogAddFriend(Context context) {
 
-        context = sContext;
+
+        this.context = context;
         mDatabase = FirebaseDatabase.getInstance().getReference();
         View diaView = View.inflate(context, R.layout.dialog_add_friend, null);
         getAllDatabasNumber();
+
     }
 
 

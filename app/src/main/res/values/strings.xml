@@ -41,6 +41,12 @@
     <string name="exit">Logga ut</string>
     <string name="title_activity_maps">Map</string>
 
+    <string name="no_gps_text_header">Hittar inte gps!</string>
+    <string name="no_gps_text_second_turn_on">Kontrollera att mobilens gps är på.</string>
+    <string name="no_gps_text_second_granted">Du måste godkänna att gps användning för C around</string>
+    <string name="no_gps_button_turn_on">Starta gps</string>
+    <string name="no_gps_button_granted">Godkänd gps</string>
+
     <!--
     Ändra avstånd dialog ruta
     -->
@@ -63,18 +69,6 @@
 
 
 
-    <string-array name="shopping_item">
-        <item>Onion</item>
-        <item>Sausage</item>
-        <item>Milk</item>
-        <item>Garlic</item>
-        <item>Beef</item>
-        <item>Veggies</item>
-        <item>Olive</item>
-        <item>Cheese</item>
-        <item>Tuna</item>
-        <item>Mushrooms</item>
-    </string-array>
 
 
 </resources>
