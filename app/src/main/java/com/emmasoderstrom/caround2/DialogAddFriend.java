@@ -147,7 +147,8 @@ public class DialogAddFriend{
 
         if((allDataBasPhoneNum.contains(contactNumber))
                 && !tempArrayNotDoubleNumber.contains(contactNumber)
-                && !thisUser.friendSendedRequests.contains(contactNumber)) {
+                && !thisUser.friendSendedRequests.contains(contactNumber)
+                && !thisUser.getPhoneNumber().equals(contactNumber)) {
             Log.d("tag", "Tjuttt tjuuuuuuuttttttttttt--------->>>>>" + tempArrayNotDoubleNumber);
             tempArrayNotDoubleNumber.add(contactNumber);
             nameFromContacts.add(contactName);
@@ -247,10 +248,15 @@ public class DialogAddFriend{
                     Person personB = snap.getValue(Person.class);
 
                     if(checktContacktsPhoneNumber.contains(personB.getPhoneNumber())){
+                        //lägger till request hos andra part
                         personB.addFriendRequests(thisUserID);
                         mDatabase.child("users").child(personB.getPersonId()).child("friendRequestsId").setValue(personB.getFriendRequestsId());
+                        //lägger till notering att det är sent request så det inte kan göras igen, hos båda parter
                         thisUser.addFriendSendedRequests(personB.getPhoneNumber());
                         mDatabase.child("users").child(thisUserID).child("friendSendedRequests").setValue(thisUser.getFriendSendedRequests());
+
+                        personB.addFriendSendedRequests(thisUser.getPhoneNumber());
+                        mDatabase.child("users").child(personB.getPersonId()).child("friendSendedRequests").setValue(personB.getFriendSendedRequests());
                     }
                 }
 

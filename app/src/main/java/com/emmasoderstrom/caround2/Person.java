@@ -22,7 +22,7 @@ public class Person {
     double locationLongitude;
     int distansBetween;
 
-    ArrayList<Person> friendRequests = new ArrayList<Person>();
+
     ArrayList<String> friendRequestsId = new ArrayList<String>();
     ArrayList<String> friendSendedRequests = new ArrayList<String>();
     ArrayList<String> friendAllowed = new ArrayList<String>();
@@ -140,14 +140,9 @@ public class Person {
         distansBetween = distans;
     }
 
-    public ArrayList<Person> getFriendRequests() {
-        return friendRequests;
-    }
 
-    public void setFriendRequests(ArrayList<Person> friendRequests) {
-        this.friendRequests = friendRequests;
-    }
 
+    //arraylists
     public ArrayList<String> getFriendRequestsId() {
         return friendRequestsId;
     }
@@ -155,6 +150,7 @@ public class Person {
     public void addFriendRequests(String reqFriendId){
         friendRequestsId.add(reqFriendId);
     }
+
 
     public ArrayList<String> getFriendSendedRequests() {
         return friendSendedRequests;
@@ -164,8 +160,13 @@ public class Person {
         friendSendedRequests.add(sendReqFriendId);
     }
 
+
     public ArrayList<String> getFriendAllowed() {
         return friendAllowed;
+    }
+
+    public void addFriendAllowed(String sendFriendAllowed){
+        friendAllowed.add(sendFriendAllowed);
     }
 
     public void setFriendAllowed(ArrayList<String> friendAllowed) {

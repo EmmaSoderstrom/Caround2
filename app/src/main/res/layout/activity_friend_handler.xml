@@ -35,7 +35,7 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/tab_friend"
+                    android:id="@+id/tab_friend_allowed"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="16dp"
@@ -45,11 +45,13 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:id="@+id/friend_if_friend"
+                        android:id="@+id/friend_allowed_content"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/friend_if_no_allowed"
+                            android:visibility="invisible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
@@ -58,11 +60,13 @@
                             android:textSize="40sp"/>
 
                         <ListView
-                            android:id="@+id/list_all_friends"
+                            android:id="@+id/list_allowed_friends"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:layout_centerVertical="true">
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginLeft="16dp">
                         </ListView>
 
                     </RelativeLayout>
@@ -76,11 +80,13 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:id="@+id/friend_if_friend_reqest"
+                        android:id="@+id/friend_reqest_content"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/friend_if_no_requests"
+                            android:visibility="invisible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
@@ -92,8 +98,10 @@
                             android:id="@+id/list_request_friends"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:layout_centerVertical="true">
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginLeft="16dp">
                         </ListView>
 
                     </RelativeLayout>
@@ -103,15 +111,25 @@
         </LinearLayout>
     </TabHost>
 
-    <ListView
-        android:id="@+id/list_friends"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_below="@id/tabHost">
+    <!--<ListView-->
+        <!--android:id="@+id/list_allowed"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:layout_below="@id/tabHost">-->
 
-    </ListView>
+    <!--</ListView>-->
+
+    <!--<ListView-->
+        <!--android:id="@+id/list_request"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:layout_below="@id/tabHost">-->
+
+    <!--</ListView>-->
 
 
 

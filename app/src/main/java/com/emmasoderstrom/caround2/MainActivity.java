@@ -352,6 +352,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onStop() {
         Log.d("tag", "Stop");
         mGoogleApiClient.disconnect();
+        //mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
+        //mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
+
         super.onStop();
     }
 
