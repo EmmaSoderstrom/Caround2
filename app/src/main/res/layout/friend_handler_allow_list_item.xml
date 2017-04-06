@@ -12,7 +12,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_account_circle_color_24dp"/>
 
 
     <TextView
@@ -31,13 +32,16 @@
         android:layout_height="wrap_content"
         />
 
-    <CheckBox
-        android:id="@+id/list_checkbox"
+
+    <ImageButton
+        android:id="@+id/list_image_edit"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:onClick="listCheckbox"/>
+        android:src="@drawable/ic_mode_edit_black_24dp"
+        android:background="@null"
+        android:onClick="onClickListImageEdit"/>
 
 </RelativeLayout>
 

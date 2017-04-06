@@ -12,12 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.google.android.gms.location.LocationListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FriendHandler extends AppCompatActivity {
 
@@ -34,10 +33,12 @@ public class FriendHandler extends AppCompatActivity {
 
     Toolbar toolbar;
     TabHost host;
+    ImageButton imageButEdit;
+    CheckBox checkboxView;
     DialogAddFriend dialogAddFriend;
     Context context;
-    FriendHandlerList adapterReq;
-    FriendHandlerList adapterAllow;
+    FriendHandlerReqList adapterReq;
+    FriendHandlerAllowList adapterAllow;
     ListView listViewReq = null;
     ListView listViewAllow = null;
 
@@ -69,9 +70,8 @@ public class FriendHandler extends AppCompatActivity {
         host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
 
-        //TabWidget tabWidget = (TabWidget)findViewById(R.id.tabs);
-//        final TextView tv = (TextView) tabWidget.getChildAt(0).findViewById(android.R.id.tabs);
-//        tv.setTextColor(this.getResources().getColorStateList(R.color.text_tab_indicator));
+        imageButEdit = (ImageButton)findViewById(R.id.list_image_edit);
+        checkboxView = (CheckBox)findViewById(R.id.list_checkbox);
 
         //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Tab One");
@@ -85,6 +85,9 @@ public class FriendHandler extends AppCompatActivity {
         spec.setContent(R.id.tab_friend_request);
         spec.setIndicator(getString(R.string.friend_tab_friReq));
         host.addTab(spec);
+
+
+
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -122,6 +125,7 @@ public class FriendHandler extends AppCompatActivity {
 
                 setAllowedFriendList();
                 setRequestFriendList();
+                setTabToShow();
 
             }
 
@@ -162,7 +166,47 @@ public class FriendHandler extends AppCompatActivity {
     }
 
 
+    public void setTabToShow(){
 
+
+
+        if(thisUser.getFriendRequestsId().size() >0){
+            Log.d("tag", "onCreate: setOnTabChangedListener tab 1");
+            host.setCurrentTab(1);
+
+            //imageButEdit.setVisibility(INVISIBLE);
+            //checkboxView.setVisibility(VISIBLE);
+        }else{
+            Log.d("tag", "onCreate: setOnTabChangedListener tab 0");
+
+            //imageButEdit.setVisibility(VISIBLE);
+            //checkboxView.setVisibility(INVISIBLE);
+        }
+
+
+
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+
+            @Override
+            public void onTabChanged(String tabId) {
+
+                int i = host.getCurrentTab();
+                Log.d("tag", "onCreate: setOnTabChangedListener ");
+
+                if (i == 0) {
+                    Log.d("tag", "onCreate: setOnTabChangedListener tab 0");
+                    //imageButEdit.setVisibility(INVISIBLE);
+                    //checkboxView.setVisibility(VISIBLE);
+
+                }
+                else if (i ==1) {
+                    Log.d("tag", "onCreate: setOnTabChangedListener tab 1");
+                    //imageButEdit.setVisibility(VISIBLE);
+                    //checkboxView.setVisibility(INVISIBLE);
+                }
+            }
+        });
+    }
 
 
 
@@ -173,40 +217,19 @@ public class FriendHandler extends AppCompatActivity {
     public void setRequestFriendList(){
         if (adapterReq == null) {
             Log.d("tag", "setRequestFriendList adapter NULL");
-            adapterReq = new FriendHandlerList(this, friendRequestsPersonList);
+            adapterReq = new FriendHandlerReqList(this, friendRequestsPersonList);
+            //adapterReq.setCheckboxVisible();
 
             listViewReq = (ListView) findViewById(R.id.list_request_friends);
             listViewReq.setAdapter(adapterReq);
 
-            CheckBox listCheckbox = (CheckBox)listViewReq.findViewById(R.id.list_checkbox);
-
-            /*listViewReq.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listCheckbox.isChecked()){
-                        Log.d("tag", "Checked");
-                    }else{
-                        Log.d("tag", "Un-Checked");
-                    }
-                }
-            });*/
-
-
-            /*listViewReq.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("tag", " click på en vän");
-
-                }
-            });*/
         }else{
             Log.d("tag", "createList notifyDataSetChanged");
             adapterReq.notifyDataSetChanged();
-            //updatedData(adapter);
         }
     }
 
-    public void listCheckbox(View view){
+    public void onClickListCheckbox(View view){
 
         //view är checkboxen
         CheckBox checkBox = (CheckBox)view;
@@ -225,11 +248,10 @@ public class FriendHandler extends AppCompatActivity {
                     //lägger till i allowlistan hos båda användarna och tar bort från request listan
                     addToAllowedLists(i);
 
-                    //mDatabase.child("users").child(friendRequestsPersonList.get(i).getPersonId()).child("friendAllowed").setValue(thisUserID);
-
+                    //ta bort från arraylistan som är koplad till list adaptern
                     friendRequestsPersonList.remove(i);
 
-                    //ny array till databasen, med de värden som är kvar
+                    //ny array till databasen, med de värden som blir kvar
                     ArrayList<String> tempNyReqList = new ArrayList<String>();
                     for (Person personReq : friendRequestsPersonList) {
                         String personId = personReq.getPersonId();
@@ -253,34 +275,6 @@ public class FriendHandler extends AppCompatActivity {
         friendRequestsPersonList.get(i).addFriendAllowed(thisUserID);
         mDatabase.child("users").child(friendRequestsPersonList.get(i).getPersonId()).child("friendAllowed").setValue(friendRequestsPersonList.get(i).getFriendAllowed());
 
-
-
-        //endast en gång, sätter användarens starvärden.
-        /*mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
-                    Person personB = snap.getValue(Person.class);
-
-                    if(friendRequestsPersonList.get(i).getPersonId().equals(personB.getPersonId())){
-                        //lägger till hos andra part
-                        personB.addFriendAllowed(thisUserID);
-                        mDatabase.child("users").child(personB.getPersonId()).child("friendAllowed").setValue(personB.getFriendAllowed());
-                        //lägger till hos denna användare
-                        thisUser.addFriendAllowed(personB.getPersonId());
-                        mDatabase.child("users").child(thisUserID).child("friendAllowed").setValue(thisUser.getFriendAllowed());
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     public void setAllowedFriendList(){
@@ -288,7 +282,8 @@ public class FriendHandler extends AppCompatActivity {
 
         if (adapterAllow == null) {
             Log.d("tag", "setallowedFriendList adapter NULL");
-            adapterAllow = new FriendHandlerList(this, friendAllowedPersonList);
+            adapterAllow = new FriendHandlerAllowList(this, friendAllowedPersonList);
+            //adapterAllow.setEditImageVisible();
 
             listViewAllow = (ListView) findViewById(R.id.list_allowed_friends);
             listViewAllow.setAdapter(adapterAllow);
@@ -302,6 +297,10 @@ public class FriendHandler extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void onClickListImageEdit(View view){
+        Log.d("tag", " click på edit " + view.getParent());
     }
 
 
