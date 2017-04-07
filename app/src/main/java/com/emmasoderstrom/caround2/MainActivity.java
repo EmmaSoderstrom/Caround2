@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String panelDistansMil;
 
     PersonList personList;
+    ArrayList<Person> closePersonList = new ArrayList<Person>();
     //ListContiner adapter;
     MainListContiner adapter;
     ListView listView = null;
@@ -157,8 +158,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
                 thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
 
-                Log.d("tag", "onDataChange: mDatabase " + mDatabase + " " + thisUser);
+                Log.d("tag", "onDataChange: mDatabase -------------->>>>><" + thisUser.getFullName());
                 if(thisUser != null) {
+                    Log.d("tag", "onDataChange: mDatabase -------------->>>>><" + thisUser);
                     updateListOfClosePerson();
                 }
 
@@ -175,31 +177,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     /**
      * Skapar personer och skapar en arraylist med alla vänner
      */
-    public void creatFakeUser(){
-        Log.d("tag", "creatFakeUser ");
-
-        writeNewUser("id1", "Jonas2", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id2", "Ulla", "Söderström", "0707324181", 10500, true, 59.35460399999999, 18.282052499999963);
-        writeNewUser("id3", "Patrik", "Slussen", "0739168234", 1000, true, 59.31951240000001, 18.07214060000001);
-        writeNewUser("id4", "Karolinska", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
-        writeNewUser("id5", "Emma", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id6", "JonasNot", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
-        writeNewUser("id7", "UllaNot", "Södersröm", "12345", 10500, true, 59.35460399999999, 18.282052499999963);
-        writeNewUser("id8", "SlussenNot", "Slussen", "12345", 1000, true, 59.31951240000001, 18.07214060000001);
-        writeNewUser("id9", "KarolinskaNot", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
-        writeNewUser("id10", "EmmaNot", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
-
-    }
-
-    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistans, boolean startSignedIn,
-                              double startLocationLatitude, double startLocationLongitude) {
-        Person personClass = new Person(startPersonId, startFirstName, startLastName, startPhoneNumber, startChosenDistans,
-                startLocationLatitude, startLocationLongitude);
-
-        personList.allPersonArrayList.add(personClass);
-        mDatabase.child("users").child(startPersonId).setValue(personClass);
-
-    }
+//    public void creatFakeUser(){
+//        Log.d("tag", "creatFakeUser ");
+//
+//        writeNewUser("id1", "Jonas2", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
+//        writeNewUser("id2", "Ulla", "Söderström", "0707324181", 10500, true, 59.35460399999999, 18.282052499999963);
+//        writeNewUser("id3", "Patrik", "Slussen", "0739168234", 1000, true, 59.31951240000001, 18.07214060000001);
+//        writeNewUser("id4", "Karolinska", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
+//        writeNewUser("id5", "Emma", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
+//        writeNewUser("id6", "JonasNot", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
+//        writeNewUser("id7", "UllaNot", "Södersröm", "12345", 10500, true, 59.35460399999999, 18.282052499999963);
+//        writeNewUser("id8", "SlussenNot", "Slussen", "12345", 1000, true, 59.31951240000001, 18.07214060000001);
+//        writeNewUser("id9", "KarolinskaNot", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
+//        writeNewUser("id10", "EmmaNot", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
+//
+//    }
+//
+//    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistans, boolean startSignedIn,
+//                              double startLocationLatitude, double startLocationLongitude) {
+//        Person personClass = new Person(startPersonId, startFirstName, startLastName, startPhoneNumber, startChosenDistans,
+//                startLocationLatitude, startLocationLongitude);
+//
+//        personList.allPersonArrayList.add(personClass);
+//        mDatabase.child("users").child(startPersonId).setValue(personClass);
+//
+//    }
 
 
 
@@ -293,10 +295,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void updateChosenDistansText(int thisUserDistans){
         chosenDistansInt = thisUserDistans;
-        Log.d("tag", "updateChosenDistansText " + thisUser);
+        Log.d("tag", "updateChosenDistansText ");
         if(thisUser != null) {
-            Log.d("tag", "updateChosenDistansText");
-            //int thisUserDistans = thisUser.getChosenDistansInt();
             int distansConverted;
             String distansValue;
 
@@ -329,7 +329,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * Karta
      */
 
-
     public void mapApiCreat(){
         Log.d("tag", "mapApiCreat");
         //"Skapar" API google map
@@ -351,12 +350,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void onStop() {
         Log.d("tag", "Stop");
+        //mGoogleApiClient.removeLocationUpdates(MainActivity.this);
         mGoogleApiClient.disconnect();
         //mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
         //mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
 
         super.onStop();
     }
+
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -378,23 +379,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             startLocationUpdates();
 
-//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//
-//            if(mLastLocation == null){
-//                startLocationUpdates();
-//            }
-//
-//            if (mLastLocation != null) {
-//                onLocationChanged(mLastLocation);
-//            }else {
-//                Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
-//                mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
-//                mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
-//
-//            }
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            if(mLastLocation == null){
+                startLocationUpdates();
+            }
+
+            if (mLastLocation != null) {
+                onLocationChanged(mLastLocation);
+            }else {
+                Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
+                //mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
+                //mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
+
+            }
         }
-
-
     }
 
     public void checkPermissionGPS(){
@@ -421,19 +420,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case MY_PERMISSION_ACCESS_COURSE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Permission godkänndes visa dialog add friends.
-
+                    //Permission godkänndes sätt vi med förfrågan om permisson inviseble
                     Log.d("tag", "MY_PERMISSION_ACCESS_COURSE_LOCATION: Permission ");
                     gpsPermissionRView.setVisibility(INVISIBLE);
                     startLocationUpdates();
-
-
                 } else {
                     Log.d("tag", "MY_PERMISSION_ACCESS_COURSE_LOCATION: Permission nekas");
                     //Permission nekades, gör inget.
-
                     gpsPermissionRView.setVisibility(VISIBLE);
-
                 }
                 return;
             }
@@ -471,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000)
+                .setInterval(3000)
                 .setFastestInterval(1000);
 
         // Request location updates
@@ -494,11 +488,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onLocationChanged(Location location) {
         Log.d("tag", "onLocationChanged");
 
-
         setThisUsersNewLocation(location);
         //updateListOfClosePerson();
-
-
     }
 
     public void setThisUsersNewLocation(Location location){
@@ -506,12 +497,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         //if(thisUser != null) {
             Log.d("tag", " thisUser OK Sätter GPS");
-            //thisUser.setLocationLatitude(location.getLatitude());
-            //thisUser.setLocationLongitude(location.getLongitude());
             mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
-            updateListOfClosePerson();
+            //updateListOfClosePerson();
 
         //}else{
            // Log.d("tag", " thisUser == null ______---------------------!!!!!! ");
@@ -538,55 +527,119 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "updateListClosePerson ");
 
         //uppdatera alla vänner som är lagrade på telefonen utifrån
-
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
                 ArrayList<String> closePersonIdList = new ArrayList<String>();
+                //ArrayList<Person> closePersonList = new ArrayList<Person>();
+                Log.d("tag", "updateListClosePerson thisUser.getFriendAllowed() " + thisUser.getFriendAllowed());
 
                 //kollar alla användare i databasen
                 for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
                     Person personB = snap.getValue(Person.class);
+                    String personBId = personB.getPersonId();
 
-                    int distanceInM;
-                    //kollar avståndet mellan denna användare och personB
-                    distanceInM = getDistanBetween(personB);
+                    if (thisUser.getFriendAllowed().contains(personB.getPersonId())) {
+                        Log.d("tag", "updateListClosePerson 1111111");
 
-                    //skapar en arraylist med alla nuvarande nära vänners id
-                    for(Person personBToGetId : personList.closePersonArrayList ){
-                        String personBId = personBToGetId.getPersonId();
-                        //de läggs till i closePersonIdList om användaren finns i användares allowed list
-                        if(thisUser.getFriendAllowed().contains(personBId)) {
-                            closePersonIdList.add(personBId);
+                        //skapar en lista med personernas id från closePersonList för att se om pesonen redan finns i listan
+                        for (Person closePerson : closePersonList) {
+                            String closePersonId = closePerson.getPersonId();
+                            closePersonIdList.add(closePersonId);
+                            Log.d("tag", "updateListClosePerson 222222");
                         }
-                    }
 
-                    //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
-                    //läggs personB till i personList.closePersonArrayList
-                    if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
-                        && !thisUserID.equals(personB.getPersonId())) {
+                        if(!closePersonIdList.contains(personBId)) {
+                            Log.d("tag", "updateListClosePerson 33333333");
+                            int distanceInM;
+                            //kollar avståndet mellan denna användare och personB
+                            distanceInM = getDistanBetween(personB);
 
-                        if(!closePersonIdList.contains(personB.getPersonId())) {
-                            personB.setDistansBetween(distanceInM);
-                            personList.closePersonArrayList.add(personB);
-                        }
-                    }
 
-                    //kollar hella personList.closePersonArrayList om det är någon som ska bort
-                    //utifall avståndet har ändrats
-                    for (Person personBToRemove : personList.closePersonArrayList ){
-                        distanceInM = getDistanBetween(personBToRemove);
-                        if (distanceInM > thisUser.getChosenDistansInt() && distanceInM > personB.getChosenDistansInt()) {
-                            personList.closePersonArrayList.remove(personBToRemove);
+                            //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
+                            //läggs personB till i personList.closePersonArrayList
+                            if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()) {
+                                Log.d("tag", "updateListClosePerson 44444444");
+                                personB.setDistansBetween(distanceInM);
+                                closePersonList.add(personB);
+                                Log.d("tag", "updateListClosePerson closePersonList " + closePersonList.toString());
+
+                            }
+
+                        }else{
+                            Log.d("tag", "onDataChange: 1 " + closePersonList.toString());
+
+                            //kollar hella personList.closePersonArrayList om det är någon som ska bort
+                            //utifall avståndet har ändrats
+                            for (Person personBToRemove : closePersonList){
+                            // Log.d("tag", "updateListClosePerson 55555555");
+
+                                int distanceInM = getDistanBetween(personBToRemove);
+                                if (distanceInM > thisUser.getChosenDistansInt() || distanceInM > personBToRemove.getChosenDistansInt()) {
+                                    Log.d("tag", "updateListClosePerson 66666666");
+                                    closePersonList.remove(personBToRemove);
+                                    Log.d("tag", "onDataChange: 2 " + closePersonList.toString());
+                                }
+                            }
                         }
                     }
                 }
 
-                personList.sortPersonArrayList();
+                
 
-                String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
+
+
+
+
+//                thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
+//                ArrayList<String> closePersonIdList = new ArrayList<String>();
+//
+//                //kollar alla användare i databasen
+//                for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
+//                    Person personB = snap.getValue(Person.class);
+//
+//                    int distanceInM;
+//                    //kollar avståndet mellan denna användare och personB
+//                    distanceInM = getDistanBetween(personB);
+//
+//                    //skapar en arraylist med alla nuvarande nära vänners id
+//                    for(Person personBToGetId : personList.closePersonArrayList ){
+//                        String personBId = personBToGetId.getPersonId();
+//                        //de läggs till i closePersonIdList om användaren finns i användares allowed list
+//                        if(thisUser.getFriendAllowed().contains(personBId)) {
+//                            closePersonIdList.add(personBId);
+//                        }
+//                    }
+//
+//                    //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
+//                    //läggs personB till i personList.closePersonArrayList
+//                    if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()
+//                        && !thisUserID.equals(personB.getPersonId())) {
+//
+//                        if(!closePersonIdList.contains(personB.getPersonId())) {
+//                            personB.setDistansBetween(distanceInM);
+//                            personList.closePersonArrayList.add(personB);
+//                        }
+//                    }
+//
+//                    //kollar hella personList.closePersonArrayList om det är någon som ska bort
+//                    //utifall avståndet har ändrats
+//                    for (Person personBToRemove : personList.closePersonArrayList ){
+//                        distanceInM = getDistanBetween(personBToRemove);
+//                        if (distanceInM > thisUser.getChosenDistansInt() && distanceInM > personB.getChosenDistansInt()) {
+//                            personList.closePersonArrayList.remove(personBToRemove);
+//                        }
+//                    }
+//                }
+//
+//                personList.sortPersonArrayList();
+//
+//                String numberOfFriensString = String.valueOf(personList.closePersonArrayList.size());
+//                numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
+
+                String numberOfFriensString = String.valueOf(closePersonList.size());
                 numberOfFrieansText.setText(numberOfFriensString + " " + panelNumberOfFriends);
                 createList();
             }
@@ -618,7 +671,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if (adapter == null) {
             Log.d("tag", "createList adapter NULL");
-            adapter = new MainListContiner(this, personList.closePersonArrayList);
+            //adapter = new MainListContiner(this, personList.closePersonArrayList);
+            adapter = new MainListContiner(this, closePersonList);
 
             listView = (ListView) findViewById(R.id.list_close_friends);
             listView.setAdapter(adapter);

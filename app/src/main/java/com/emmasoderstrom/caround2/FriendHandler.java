@@ -127,6 +127,46 @@ public class FriendHandler extends AppCompatActivity {
             }
         });
 
+        /*mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                thisUser = dataSnapshot.child("users")
+                        .child(thisUserID)
+                        .getValue(Person.class);
+
+
+                //Skapar en list med personer utav thisUsers friendRequestsId
+                for (String personBId : thisUser.getFriendRequestsId()) {
+                    Log.d("tag", "personBId " + personBId);
+                    Person personB = dataSnapshot.child("users")
+                            .child(personBId)
+                            .getValue(Person.class);
+
+
+                    friendRequestsPersonList.add(personB);
+
+                }
+
+                //Skapar en list med personer utav thisUsers friendAllowed
+                for (String personBId : thisUser.getFriendAllowed()) {
+                    Person personB = dataSnapshot.child("users")
+                            .child(personBId)
+                            .getValue(Person.class);
+
+                    friendAllowedPersonList.add(personB);
+                }
+
+
+                setRequestFriendList();
+                setAllowedFriendList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
     }
 
 
@@ -227,7 +267,9 @@ public class FriendHandler extends AppCompatActivity {
                     addToAllowedLists(i);
 
                     //ta bort från arraylistan som är koplad till list adaptern
+                    friendAllowedPersonList.add(friendRequestsPersonList.get(i));
                     friendRequestsPersonList.remove(i);
+
 
                     //ny requestArray till databasen, med de personId som blir kvar.
                     ArrayList<String> tempNyReqList = new ArrayList<String>();
@@ -238,6 +280,7 @@ public class FriendHandler extends AppCompatActivity {
                     mDatabase.child("users").child(thisUserID).child("friendRequestsId").setValue(tempNyReqList);
 
                     setRequestFriendList();
+                    //setAllowedFriendList();
 
                     break;
                 }

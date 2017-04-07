@@ -28,11 +28,10 @@ public class DialogAddFriend{
 
 
     static String thisUserID;
-
+    Person thisUser;
 
     Context context;
     private DatabaseReference mDatabase;
-    Person thisUser;
 
     AlertDialog.Builder builder1;
 
@@ -50,18 +49,14 @@ public class DialogAddFriend{
 
         this.context = context;
         thisUser = startThisUser;
-
         thisUserID = MainActivity.thisUserID;
-
-
     }
 
     public void showDialogAddFriend(Context context) {
 
-
         this.context = context;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        View diaView = View.inflate(context, R.layout.dialog_add_friend, null);
+        //View diaView = View.inflate(context, R.layout.dialog_add_friend, null);
         getAllDatabasNumber();
 
     }
@@ -71,12 +66,10 @@ public class DialogAddFriend{
 
         final ArrayList<String> allDataBasPhoneNum = new ArrayList<String>();
 
-        //endast en gång, sätter användarens starvärden.
+        //endast en gång, sätter användarens startvärden.
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.d("tag", "_____-----------MMMMMMMMMMMM----------->>>>>>>>>>>>>>>>>>");
 
                 for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
                     Person personB = snap.getValue(Person.class);
@@ -86,7 +79,6 @@ public class DialogAddFriend{
                         thisUser = personB;
                     }
                 }
-
                 setUpArray(allDataBasPhoneNum);
             }
 
@@ -130,12 +122,7 @@ public class DialogAddFriend{
                         addContactToList(allDataBasPhoneNum, "0" + contactNumberTakeLast9, contactName);
                     }
                 }
-
-
-
             }
-
-
             i++;
         }
 
@@ -149,7 +136,6 @@ public class DialogAddFriend{
                 && !tempArrayNotDoubleNumber.contains(contactNumber)
                 && !thisUser.friendSendedRequests.contains(contactNumber)
                 && !thisUser.getPhoneNumber().equals(contactNumber)) {
-            Log.d("tag", "Tjuttt tjuuuuuuuttttttttttt--------->>>>>" + tempArrayNotDoubleNumber);
             tempArrayNotDoubleNumber.add(contactNumber);
             nameFromContacts.add(contactName);
             phoneNumberFromContacts.add(contactNumber);
@@ -176,19 +162,13 @@ public class DialogAddFriend{
             @Override
             public void onClick(DialogInterface dialog, int position, boolean isChecked) {
 
-                Log.d("tag", "Dialog klick på vänner");
-
                 if(isChecked){
-                    Log.d("tag", "Dialog klick på vänner checkt" + position);
                     checktContacktsPhoneNumber.add(phoneNumberFromContacts.get(position));
                 }else{
-                    Log.d("tag", "Dialog klick på vänner Not checkt" + position);
                     if(checktContacktsPhoneNumber.contains(phoneNumberFromContacts.get(position))){
                         checktContacktsPhoneNumber.remove(checktContacktsPhoneNumber.indexOf(phoneNumberFromContacts.get(position)));
                     }
                 }
-
-                Log.d("tag", "Dialog klick på vänner färdig checka" + checktContacktsPhoneNumber);
             }
         });
 
@@ -197,7 +177,6 @@ public class DialogAddFriend{
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d("tag", "Dialog Klar");
-
                         sendFriendRequest();
                         dialog.cancel();
 
@@ -242,8 +221,6 @@ public class DialogAddFriend{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.d("tag", "_____-----------PPPPPPPPPPPP----------->>>>>>>>>>>>>>>>>>");
-
                 for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
                     Person personB = snap.getValue(Person.class);
 
@@ -259,8 +236,6 @@ public class DialogAddFriend{
                         mDatabase.child("users").child(personB.getPersonId()).child("friendSendedRequests").setValue(personB.getFriendSendedRequests());
                     }
                 }
-
-
             }
 
             @Override
@@ -268,7 +243,6 @@ public class DialogAddFriend{
 
             }
         });
-
     }
 
 

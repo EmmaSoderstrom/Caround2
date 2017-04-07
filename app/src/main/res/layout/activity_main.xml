@@ -25,13 +25,13 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="56dp"
-            android:text="text_number_of_friends"
+            android:text="@string/panel_start_text_of_friends"
             />
         <TextView
             android:id="@+id/text_distans"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="distans"
+            android:text="@string/panel_start_text_distans"
             android:layout_alignParentRight="true"
             />
 

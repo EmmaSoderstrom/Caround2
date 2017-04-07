@@ -28,6 +28,8 @@
     <!--
     Huvudsida sida
     -->
+    <string name="panel_start_text_of_friends">0 vänner</string>
+    <string name="panel_start_text_distans">0 m</string>
     <string name="panel_number_of_friends">vänner</string>
     <string name="panel_distans_m">m</string>
     <string name="panel_distans_km">km</string>
