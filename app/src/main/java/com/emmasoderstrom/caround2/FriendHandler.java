@@ -28,27 +28,26 @@ import java.util.ArrayList;
 
 public class FriendHandler extends AppCompatActivity {
 
+    final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 11;
 
     static String thisUserID;
+    Person thisUser;
 
+    Context context;
     Toolbar toolbar;
     TabHost host;
-    ImageButton imageButEdit;
-    CheckBox checkboxView;
     DialogAddFriend dialogAddFriend;
-    Context context;
+    private DatabaseReference mDatabase;
+
     FriendHandlerReqList adapterReq;
     FriendHandlerAllowList adapterAllow;
     ListView listViewReq = null;
     ListView listViewAllow = null;
 
-    private DatabaseReference mDatabase;
-    Person thisUser;
-
     ArrayList<Person> friendRequestsPersonList = new ArrayList<Person>();
     ArrayList<Person> friendAllowedPersonList = new ArrayList<Person>();
 
-    final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 11;
+
 
 
     public FriendHandler(){
@@ -61,17 +60,12 @@ public class FriendHandler extends AppCompatActivity {
         setContentView(R.layout.activity_friend_handler);
 
         thisUserID = MainActivity.thisUserID;
-        Log.d("tag", "onCreate: thisUserID " + thisUserID);
 
         setToolbar();
-
         dialogAddFriend = new DialogAddFriend(this, thisUser);
 
         host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
-
-        imageButEdit = (ImageButton)findViewById(R.id.list_image_edit);
-        checkboxView = (CheckBox)findViewById(R.id.list_checkbox);
 
         //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Tab One");
@@ -89,9 +83,8 @@ public class FriendHandler extends AppCompatActivity {
 
 
 
-
+        //hämtar info från databas
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        //endast en gång, sätter användarens starvärden.
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,10 +93,9 @@ public class FriendHandler extends AppCompatActivity {
                 thisUser = dataSnapshot.child("users")
                         .child(thisUserID)
                         .getValue(Person.class);
-                Log.d("tag", "This  user " + thisUser.getFriendRequestsId());
 
 
-                //Skapar en list med personer utav thisUsers lista på allowed och requeset friends list, som innehåller id.
+                //Skapar en list med personer utav thisUsers friendRequestsId
                 for (String personBId : thisUser.getFriendRequestsId()) {
                     Log.d("tag", "personBId " + personBId);
                     Person personB = dataSnapshot.child("users")
@@ -113,8 +105,7 @@ public class FriendHandler extends AppCompatActivity {
                     friendRequestsPersonList.add(personB);
                 }
 
-                Log.d("tag", "friendRequestsPersonList " + friendRequestsPersonList);
-
+                //Skapar en list med personer utav thisUsers friendAllowed
                 for (String personBId : thisUser.getFriendAllowed()) {
                     Person personB = dataSnapshot.child("users")
                             .child(personBId)
@@ -125,6 +116,7 @@ public class FriendHandler extends AppCompatActivity {
 
                 setAllowedFriendList();
                 setRequestFriendList();
+                //visa request taben om det finns förfrågningar
                 setTabToShow();
 
             }
@@ -134,6 +126,7 @@ public class FriendHandler extends AppCompatActivity {
 
             }
         });
+
     }
 
 
@@ -168,68 +161,55 @@ public class FriendHandler extends AppCompatActivity {
 
     public void setTabToShow(){
 
-
-
         if(thisUser.getFriendRequestsId().size() >0){
             Log.d("tag", "onCreate: setOnTabChangedListener tab 1");
             host.setCurrentTab(1);
-
-            //imageButEdit.setVisibility(INVISIBLE);
-            //checkboxView.setVisibility(VISIBLE);
-        }else{
-            Log.d("tag", "onCreate: setOnTabChangedListener tab 0");
-
-            //imageButEdit.setVisibility(VISIBLE);
-            //checkboxView.setVisibility(INVISIBLE);
         }
-
-
-
-        host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-
-            @Override
-            public void onTabChanged(String tabId) {
-
-                int i = host.getCurrentTab();
-                Log.d("tag", "onCreate: setOnTabChangedListener ");
-
-                if (i == 0) {
-                    Log.d("tag", "onCreate: setOnTabChangedListener tab 0");
-                    //imageButEdit.setVisibility(INVISIBLE);
-                    //checkboxView.setVisibility(VISIBLE);
-
-                }
-                else if (i ==1) {
-                    Log.d("tag", "onCreate: setOnTabChangedListener tab 1");
-                    //imageButEdit.setVisibility(VISIBLE);
-                    //checkboxView.setVisibility(INVISIBLE);
-                }
-            }
-        });
     }
 
 
 
     /*
     *Lista med godkända vänner
-     */
-
+    */
     public void setRequestFriendList(){
         if (adapterReq == null) {
             Log.d("tag", "setRequestFriendList adapter NULL");
             adapterReq = new FriendHandlerReqList(this, friendRequestsPersonList);
-            //adapterReq.setCheckboxVisible();
 
             listViewReq = (ListView) findViewById(R.id.list_request_friends);
             listViewReq.setAdapter(adapterReq);
 
         }else{
-            Log.d("tag", "createList notifyDataSetChanged");
+            Log.d("tag", "setRequestFriendList notifyDataSetChanged");
             adapterReq.notifyDataSetChanged();
         }
     }
 
+    public void setAllowedFriendList(){
+
+        if (adapterAllow == null) {
+            Log.d("tag", "setallowedFriendList adapter NULL");
+            adapterAllow = new FriendHandlerAllowList(this, friendAllowedPersonList);
+
+            listViewAllow = (ListView) findViewById(R.id.list_allowed_friends);
+            listViewAllow.setAdapter(adapterAllow);
+
+            listViewAllow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("tag", " click på en vän allowed");
+                }
+            });
+
+        }else{
+            Log.d("tag", "setAllowedFriendList notifyDataSetChanged");
+            adapterAllow.notifyDataSetChanged();
+        }
+    }
+
     public void onClickListCheckbox(View view){
+        Log.d("tag", "onClickListCheckbox: ");
 
         //view är checkboxen
         CheckBox checkBox = (CheckBox)view;
@@ -240,18 +220,16 @@ public class FriendHandler extends AppCompatActivity {
 
 
         if(checkBox.isChecked()){
-            Log.d("tag", "listCheckbox: i klickad " + thisUser.getFriendRequestsId());
-
             for (int i = 0; i < friendRequestsPersonList.size(); i++) {
                 if(friendRequestsPersonList.get(i).getPersonId().equals(viewPersonId)){
 
-                    //lägger till i allowlistan hos båda användarna och tar bort från request listan
+                    //ändrar reqest till allowed
                     addToAllowedLists(i);
 
                     //ta bort från arraylistan som är koplad till list adaptern
                     friendRequestsPersonList.remove(i);
 
-                    //ny array till databasen, med de värden som blir kvar
+                    //ny requestArray till databasen, med de personId som blir kvar.
                     ArrayList<String> tempNyReqList = new ArrayList<String>();
                     for (Person personReq : friendRequestsPersonList) {
                         String personId = personReq.getPersonId();
@@ -268,7 +246,9 @@ public class FriendHandler extends AppCompatActivity {
     }
 
     public void addToAllowedLists(final int i){
-
+        //Vid godkännande av vännförfrågan, läggs den andrapart användaren i allowlistan
+        //och thisUser läggs till i andrapart användarens allowlistan
+        //och personsen tas bort från thisUsers requestlistan
         thisUser.addFriendAllowed(friendRequestsPersonList.get(i).getPersonId());
         mDatabase.child("users").child(thisUserID).child("friendAllowed").setValue(thisUser.getFriendAllowed());
 
@@ -277,27 +257,6 @@ public class FriendHandler extends AppCompatActivity {
 
     }
 
-    public void setAllowedFriendList(){
-
-
-        if (adapterAllow == null) {
-            Log.d("tag", "setallowedFriendList adapter NULL");
-            adapterAllow = new FriendHandlerAllowList(this, friendAllowedPersonList);
-            //adapterAllow.setEditImageVisible();
-
-            listViewAllow = (ListView) findViewById(R.id.list_allowed_friends);
-            listViewAllow.setAdapter(adapterAllow);
-
-
-            listViewAllow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("tag", " click på en vän");
-
-                }
-            });
-        }
-    }
 
     public void onClickListImageEdit(View view){
         Log.d("tag", " click på edit " + view.getParent());
@@ -311,8 +270,8 @@ public class FriendHandler extends AppCompatActivity {
     *Knapp add friend
      */
     public void addFriendRequest(View view){
-
-        //kollar permission för kontakater
+        Log.d("tag", "addFriendRequest: finnspermission?");
+        //kollar permission för kontakaten
 
         // Assume thisActivity is the current activity
         /*int permissionCheck = ContextCompat.checkSelfPermission(this,
@@ -328,9 +287,7 @@ public class FriendHandler extends AppCompatActivity {
 
                 Log.d("tag", "checkSelfPermission: finns inte permission för contakter");
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+                //fråga om premission
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.READ_CONTACTS},
                         MY_PERMISSIONS_REQUEST_READ_CONTACTS);
@@ -338,13 +295,10 @@ public class FriendHandler extends AppCompatActivity {
             } else {
 
                 Log.d("tag", "checkSelfPermission: 1else");
-                // No explanation needed, we can request the permission.
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
-
-
             }
         }else{
             Log.d("tag", "addFriendRequest: ");
@@ -358,9 +312,8 @@ public class FriendHandler extends AppCompatActivity {
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("tag", "onRequestPermissionsResult: Permission ok");
                     //Permission godkänndes visa dialog add friends.
-
-                    Log.d("tag", "addFriendRequest: ");
                     dialogAddFriend.showDialogAddFriend(this);
 
                 } else {

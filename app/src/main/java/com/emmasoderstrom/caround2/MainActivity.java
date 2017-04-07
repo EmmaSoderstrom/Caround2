@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setThisUser();
 
         personList = new PersonList(this, 0);
-        creatFakeUser();
+        //creatFakeUser();
 
     }
 
@@ -503,8 +503,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void setThisUsersNewLocation(Location location){
         Log.d("tag", "setThisUsersNewLocation");
-        Log.d("tag", "thisuser" + thisUser);
-        //Log.d("tag", "thisuser" + thisUser.getFullName());
 
         //if(thisUser != null) {
             Log.d("tag", " thisUser OK Sätter GPS");
@@ -513,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
-            //updateListOfClosePerson();
+            updateListOfClosePerson();
 
         //}else{
            // Log.d("tag", " thisUser == null ______---------------------!!!!!! ");
@@ -539,11 +537,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void updateListOfClosePerson() {
         Log.d("tag", "updateListClosePerson ");
 
-        //personList.closePersonArrayList.clear();
-
         //uppdatera alla vänner som är lagrade på telefonen utifrån
-
-
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -563,7 +557,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     //skapar en arraylist med alla nuvarande nära vänners id
                     for(Person personBToGetId : personList.closePersonArrayList ){
                         String personBId = personBToGetId.getPersonId();
-                        closePersonIdList.add(personBId);
+                        //de läggs till i closePersonIdList om användaren finns i användares allowed list
+                        if(thisUser.getFriendAllowed().contains(personBId)) {
+                            closePersonIdList.add(personBId);
+                        }
                     }
 
                     //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
@@ -619,12 +616,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void createList() {
         Log.d("tag", "createList");
 
-        //Integer[] picList = personList.personPicArrayListToArray();
-        //Person[] closePersonList = personList.personClosePersonArrayListToArray();
-
         if (adapter == null) {
             Log.d("tag", "createList adapter NULL");
-            //adapter = new ListContiner(this, picList, personList.closePersonArrayList);
             adapter = new MainListContiner(this, personList.closePersonArrayList);
 
             listView = (ListView) findViewById(R.id.list_close_friends);
@@ -640,8 +633,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             });
 
-
-
         }else{
             Log.d("tag", "createList notifyDataSetChanged");
             adapter.notifyDataSetChanged();
@@ -649,27 +640,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    int count = 0;
-    public void updatedData(ListContiner adapter) {
-
-        count++;
-        if(count > 5){
-            //writeNewUser("Slussen", "Slussen", 200, 59.31951240000001, 18.07214060000001);
-            mDatabase.child("users").child("Slussen").child("chosenDistansInt").setValue(200);
-            //fakeP3.setChosenDistans(100000);
-        }
-        if (count > 10){
-            // writeNewUser("Slussen", "Slussen", 10000, 59.31951240000001, 18.07214060000001);
-            mDatabase.child("users").child("Slussen").child("chosenDistansInt").setValue(10000);
-            //fakeP3.setChosenDistans(500);
-
-            //fakeP2.setLocationLatitude(59.314449);
-            //fakeP2.setLocationLongitude(59.314449);
-        }
-        if (count > 15){
-            //fakeP2.setLocationLatitude(59.31803730000001);
-            //fakeP2.setLocationLongitude(18.38822559999994);
-            count = 0;
-        }
-    }
 }

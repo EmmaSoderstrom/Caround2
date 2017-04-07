@@ -25,7 +25,7 @@ public class PersonList extends ArrayAdapter<ListContiner> {
     ArrayList<Integer> picArrayList = new ArrayList<Integer>();
     ArrayList<String> nameArrayList = new ArrayList<String>();
 
-    Integer picArray[] = {
+    /*Integer picArray[] = {
             R.drawable.ball,
             R.drawable.ball,
             R.drawable.ball,
@@ -38,9 +38,9 @@ public class PersonList extends ArrayAdapter<ListContiner> {
             R.drawable.ball,
             R.drawable.ball,
             R.drawable.ball,
-    };
+    };*/
 
-    String nameArray[] = {
+    /*String nameArray[] = {
             "Jonas"+" "+"Amnesten",
             "Emma"+" "+"Södetersöm",
             "Lisa"+" "+"Svensson",
@@ -53,9 +53,9 @@ public class PersonList extends ArrayAdapter<ListContiner> {
             "Nils"+" "+"Hansson",
             "Patrik"+" "+"Pertersson",
             "Joel"+" "+"Joelsson"
-    };
+    };*/
 
-    String distansArray[] = {
+    /*String distansArray[] = {
             "2"+" "+"km",
             "2,6"+" "+"m",
             "1,8"+" "+"km",
@@ -68,13 +68,13 @@ public class PersonList extends ArrayAdapter<ListContiner> {
             "200"+" "+"m",
             "212"+" "+"m",
             "2,1"+" "+"mil"
-    };
+    };*/
 
     public PersonList(Context context, int resource){
         super(context, resource);
     }
 
-    public ArrayList picArrayToList(){
+   /* public ArrayList picArrayToList(){
         for (int i = 0; i < picArray.length; i++) {
             picArrayList.add(picArray[i]);
         }
@@ -86,7 +86,7 @@ public class PersonList extends ArrayAdapter<ListContiner> {
             nameArrayList.add(nameArray[i]);
         }
         return nameArrayList;
-    }
+    }*/
 
     public void sortPersonArrayList() {
         Collections.sort(closePersonArrayList, new Comparator<Person>() {
