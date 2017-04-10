@@ -26,6 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 public class FriendHandler extends AppCompatActivity {
 
     final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 11;
@@ -224,6 +227,13 @@ public class FriendHandler extends AppCompatActivity {
             Log.d("tag", "setRequestFriendList notifyDataSetChanged");
             adapterReq.notifyDataSetChanged();
         }
+
+        RelativeLayout relNoReq = (RelativeLayout)findViewById(R.id.friend_if_no_requests);
+        if(friendRequestsPersonList.size() == 0){
+            relNoReq.setVisibility(VISIBLE);
+        }else{
+            relNoReq.setVisibility(INVISIBLE);
+        }
     }
 
     public void setAllowedFriendList(){
@@ -245,6 +255,13 @@ public class FriendHandler extends AppCompatActivity {
         }else{
             Log.d("tag", "setAllowedFriendList notifyDataSetChanged");
             adapterAllow.notifyDataSetChanged();
+        }
+
+        RelativeLayout relNoAllow = (RelativeLayout)findViewById(R.id.friend_if_no_allowed);
+        if(friendAllowedPersonList.size() == 0){
+            relNoAllow.setVisibility(VISIBLE);
+        }else{
+            relNoAllow.setVisibility(INVISIBLE);
         }
     }
 
@@ -269,8 +286,7 @@ public class FriendHandler extends AppCompatActivity {
                     //ta bort från arraylistan som är koplad till list adaptern
                     friendAllowedPersonList.add(friendRequestsPersonList.get(i));
                     friendRequestsPersonList.remove(i);
-
-
+                    
                     //ny requestArray till databasen, med de personId som blir kvar.
                     ArrayList<String> tempNyReqList = new ArrayList<String>();
                     for (Person personReq : friendRequestsPersonList) {

@@ -1,10 +1,14 @@
 package com.emmasoderstrom.caround2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,9 +26,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,11 +50,12 @@ import java.util.ArrayList;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.emmasoderstrom.caround2.FriendHandler.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener  {
+        LocationListener {
 
     public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
     public static final String USER_ID_KEY = "userIdKey";
@@ -55,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     Toolbar toolbar;
     DialogChangeDistansOneWheel dialogChangeDistans;
-    //FriendHandler friendHandler;
     DialogViewListFriend dialogViewListFriend;
 
+    int REQUEST_CHECK_SETTINGS = 100;
     final static int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -73,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     PersonList personList;
     ArrayList<Person> closePersonList = new ArrayList<Person>();
-    //ListContiner adapter;
     MainListContiner adapter;
     ListView listView = null;
     //String thisPersonPhoneId;
+
 
 
 
@@ -90,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
 
         Intent intent = getIntent();
+
         String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
         //thisUserID = message;
         thisUserID = message;
@@ -388,10 +402,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (mLastLocation != null) {
                 onLocationChanged(mLastLocation);
             }else {
-                Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
-                //mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(0);
-                //mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(0);
+                //Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
 
+                //kollar om gps är på
+                LocationRequest locationRequest = LocationRequest.create();
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                locationRequest.setInterval(30 * 1000);
+                locationRequest.setFastestInterval(5 * 1000);
+                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                        .addLocationRequest(locationRequest);
+
+                builder.setAlwaysShow(true);
+
+                PendingResult<LocationSettingsResult> result =
+                        LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+                result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                    @Override
+                    public void onResult(LocationSettingsResult result) {
+                        final Status status = result.getStatus();
+                        final LocationSettingsStates state = result.getLocationSettingsStates();
+                        switch (status.getStatusCode()) {
+                            case LocationSettingsStatusCodes.SUCCESS:
+                                // All location settings are satisfied. The client can initialize location
+                                // requests here.
+                                break;
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                // Location settings are not satisfied. But could be fixed by showing the user
+                                // a dialog.
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(),
+                                    // and check the result in onActivityResult().
+                                    status.startResolutionForResult(MainActivity.this, 1000);
+                                } catch (IntentSender.SendIntentException e) {
+                                    // Ignore the error.
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                // Location settings are not satisfied. However, we have no way to fix the
+                                // settings so we won't show the dialog.
+                                break;
+                        }
+                    }
+                });
             }
         }
     }
@@ -532,9 +584,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
-                ArrayList<String> closePersonIdList = new ArrayList<String>();
-                //ArrayList<Person> closePersonList = new ArrayList<Person>();
-                Log.d("tag", "updateListClosePerson thisUser.getFriendAllowed() " + thisUser.getFriendAllowed());
 
                 //kollar alla användare i databasen
                 for (DataSnapshot snap : dataSnapshot.child("users").getChildren()) {
@@ -542,52 +591,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     String personBId = personB.getPersonId();
 
                     if (thisUser.getFriendAllowed().contains(personB.getPersonId())) {
-                        Log.d("tag", "updateListClosePerson 1111111");
 
-                        //skapar en lista med personernas id från closePersonList för att se om pesonen redan finns i listan
-                        for (Person closePerson : closePersonList) {
-                            String closePersonId = closePerson.getPersonId();
-                            closePersonIdList.add(closePersonId);
-                            Log.d("tag", "updateListClosePerson 222222");
-                        }
+                        //Kolla om den redan innhåller person med id
+                        Boolean ifclosePersonListContainsId = checkIfArryListContainsId(closePersonList, personBId);
 
-                        if(!closePersonIdList.contains(personBId)) {
-                            Log.d("tag", "updateListClosePerson 33333333");
+                        if(!ifclosePersonListContainsId) {
                             int distanceInM;
+
                             //kollar avståndet mellan denna användare och personB
                             distanceInM = getDistanBetween(personB);
-
 
                             //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
                             //läggs personB till i personList.closePersonArrayList
                             if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()) {
-                                Log.d("tag", "updateListClosePerson 44444444");
                                 personB.setDistansBetween(distanceInM);
                                 closePersonList.add(personB);
-                                Log.d("tag", "updateListClosePerson closePersonList " + closePersonList.toString());
-
                             }
 
                         }else{
-                            Log.d("tag", "onDataChange: 1 " + closePersonList.toString());
 
-                            //kollar hella personList.closePersonArrayList om det är någon som ska bort
-                            //utifall avståndet har ändrats
-                            for (Person personBToRemove : closePersonList){
-                            // Log.d("tag", "updateListClosePerson 55555555");
+                            //kollar i closePersonList om det är någon som ska bort
+                            int distanceInM = getDistanBetween(personB);
 
-                                int distanceInM = getDistanBetween(personBToRemove);
-                                if (distanceInM > thisUser.getChosenDistansInt() || distanceInM > personBToRemove.getChosenDistansInt()) {
-                                    Log.d("tag", "updateListClosePerson 66666666");
-                                    closePersonList.remove(personBToRemove);
-                                    Log.d("tag", "onDataChange: 2 " + closePersonList.toString());
+                            if (distanceInM > thisUser.getChosenDistansInt() || distanceInM > personB.getChosenDistansInt()) {
+
+                                for (Person personBToRemove:closePersonList) {
+                                    if(personBToRemove.getPersonId().equals(personB.getPersonId())){
+                                        closePersonList.remove(personBToRemove);
+                                        break;
+                                    }
+                                }
+                            }else{
+                                //updatera avstånds text
+                                for (Person personBToUpdate:closePersonList) {
+                                    if(personBToUpdate.getPersonId().equals(personB.getPersonId())){
+                                        personBToUpdate.setDistansBetween(distanceInM);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                
+
 
 
 
@@ -652,6 +699,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
+    public boolean checkIfArryListContainsId(ArrayList<Person> closePersonList, String presonBId){
+
+        boolean ifContines = false;
+
+        for (int i = 0; i <closePersonList.size() ; i++) {
+            if(closePersonList.get(i).getPersonId().equals(presonBId)){
+                ifContines = true;
+                break;
+            }
+        }
+
+        return ifContines;
+    }
+
     public int getDistanBetween(Person personB){
         LatLng mPositionA;
         LatLng mPositionB;
@@ -694,4 +755,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+   /* @Override
+    public void onResult(@NonNull Result result) {
+
+    }*/
 }

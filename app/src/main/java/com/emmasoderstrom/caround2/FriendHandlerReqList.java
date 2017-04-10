@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -30,8 +32,6 @@ public class FriendHandlerReqList extends ArrayAdapter<Person> {
     View rowView;
 
     ImageView imagePicView;
-    Bitmap myBitmap;
-    Layout itemLayout;
 
 
     public FriendHandlerReqList(Activity context, ArrayList<Person> startPerson) {
@@ -60,9 +60,6 @@ public class FriendHandlerReqList extends ArrayAdapter<Person> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
-
-
         TabHost host = (TabHost)context.findViewById(R.id.tabHost);
         Log.d("tag", "host: " + host.getCurrentTab());
 
@@ -83,10 +80,12 @@ public class FriendHandlerReqList extends ArrayAdapter<Person> {
         String userPicS = person.get(position).getPicString();
         new DownloadImage().execute(userPicS);
 
-
-        //imagePicView.setImageDrawable(placeHolderImage);
-        //imagePicView.setTag(userPicS);
-        //new DownloadImageTask().execute(imagePicView);
+        //Håller bilden på plats till den rätta raden i listan
+        Picasso.with(context)
+                .load(userPicS)
+                .resize(50, 50)
+                .centerCrop()
+                .into(imagePicView);
 
         textNameView.setText(person.get(position).getFullName());
         textIdView.setText(person.get(position).getPersonId());
@@ -121,34 +120,5 @@ public class FriendHandlerReqList extends ArrayAdapter<Person> {
             imagePicView.setImageBitmap(result);
         }
     }
-
-    /*private class DownloadImageTask extends AsyncTask<ImageView,Void, Bitmap> {
-        private ImageView imageView;
-
-
-        @Override
-        protected Bitmap doInBackground(ImageView... params) {
-
-            URL imageURL = (URL) imv.getTag();
-            imageView = imv;
-            Bitmap bitmap = null;
-            try {
-                bitmap = BitmapFactory.decodeStream((InputStream)(imageURL.getContent()));
-            } catch (MalformedURLException e) {
-                // Invalid URL
-            } catch (IOException e) {
-                //Problem with connecting internet, or resource is not available
-            }
-            return bitmap;
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap){
-            imageView.setImageBitmap(bitmap);
-        }
-
-    }*/
 
 }

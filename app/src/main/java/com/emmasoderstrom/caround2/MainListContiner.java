@@ -3,16 +3,26 @@ package com.emmasoderstrom.caround2;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+
+import static android.support.v7.widget.RecyclerView.*;
 
 /**
  * Created by User on 2017-03-02.
@@ -28,6 +38,7 @@ public class MainListContiner extends ArrayAdapter<Person> {
     //private final Person[] person;
     private ArrayList<Person> person;
 
+    ViewHolder holder;
     ImageView imagePicView;
 
 
@@ -58,13 +69,14 @@ public class MainListContiner extends ArrayAdapter<Person> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+
         View rowView;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = (View) inflater.inflate(R.layout.main_list_item, null,true);
+            rowView = inflater.inflate(R.layout.main_list_item, null,true);
         } else {
-            rowView = (View) convertView;
+            rowView = convertView;
         }
 
         imagePicView = (ImageView) rowView.findViewById(R.id.list_pic);
@@ -74,6 +86,14 @@ public class MainListContiner extends ArrayAdapter<Person> {
         //bild
         String userPicS = person.get(position).getPicString();
         new DownloadImage().execute(userPicS);
+
+        //Håller bilden på plats till den rätta raden i listan
+        Picasso.with(context)
+                .load(userPicS)
+                .resize(50, 50)
+                .centerCrop()
+                .into(imagePicView);
+
 
         //text för och efternamn
         textNameView.setText(person.get(position).getFullName());
@@ -134,6 +154,8 @@ public class MainListContiner extends ArrayAdapter<Person> {
             imagePicView.setImageBitmap(result);
         }
     }
+
+
 
 
 }

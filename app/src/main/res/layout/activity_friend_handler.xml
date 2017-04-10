@@ -49,15 +49,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView
+                        <RelativeLayout
                             android:id="@+id/friend_if_no_allowed"
                             android:visibility="invisible"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:layout_centerVertical="true"
-                            android:text="Inga vänner"
-                            android:textSize="40sp"/>
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:layout_centerVertical="true"
+                                android:text="Inga vänner"
+                                android:textSize="40sp"/>
+                        </RelativeLayout>
+
 
                         <ListView
                             android:id="@+id/list_allowed_friends"
@@ -84,15 +89,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView
+                        <RelativeLayout
                             android:id="@+id/friend_if_no_requests"
                             android:visibility="invisible"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:layout_centerVertical="true"
-                            android:text="Inga vänförfrågningar"
-                            android:textSize="40sp"/>
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:layout_centerVertical="true"
+                                android:text="Inga vänförfrågningar"
+                                android:textSize="40sp"/>
+                        </RelativeLayout>
+
 
                         <ListView
                             android:id="@+id/list_request_friends"

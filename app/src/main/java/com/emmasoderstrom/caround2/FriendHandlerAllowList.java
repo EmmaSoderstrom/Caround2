@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -27,8 +29,6 @@ public class FriendHandlerAllowList extends ArrayAdapter<Person> {
     View rowView;
 
     ImageView imagePicView;
-    Bitmap myBitmap;
-    Layout itemLayout;
 
 
     public FriendHandlerAllowList(Activity context, ArrayList<Person> startPerson) {
@@ -80,10 +80,12 @@ public class FriendHandlerAllowList extends ArrayAdapter<Person> {
         String userPicS = person.get(position).getPicString();
         new DownloadImage().execute(userPicS);
 
-
-        //imagePicView.setImageDrawable(placeHolderImage);
-        //imagePicView.setTag(userPicS);
-        //new DownloadImageTask().execute(imagePicView);
+        //Håller bilden på plats till den rätta raden i listan
+        Picasso.with(context)
+                .load(userPicS)
+                .resize(50, 50)
+                .centerCrop()
+                .into(imagePicView);
 
         textNameView.setText(person.get(position).getFullName());
         textIdView.setText(person.get(position).getPersonId());
@@ -118,34 +120,5 @@ public class FriendHandlerAllowList extends ArrayAdapter<Person> {
             imagePicView.setImageBitmap(result);
         }
     }
-
-    /*private class DownloadImageTask extends AsyncTask<ImageView,Void, Bitmap> {
-        private ImageView imageView;
-
-
-        @Override
-        protected Bitmap doInBackground(ImageView... params) {
-
-            URL imageURL = (URL) imv.getTag();
-            imageView = imv;
-            Bitmap bitmap = null;
-            try {
-                bitmap = BitmapFactory.decodeStream((InputStream)(imageURL.getContent()));
-            } catch (MalformedURLException e) {
-                // Invalid URL
-            } catch (IOException e) {
-                //Problem with connecting internet, or resource is not available
-            }
-            return bitmap;
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap){
-            imageView.setImageBitmap(bitmap);
-        }
-
-    }*/
 
 }

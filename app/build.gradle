@@ -63,6 +63,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:10.2.1'
     compile 'com.google.android.gms:play-services-auth:10.2.1'
 
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //compile 'com.squareup.picasso:picasso:10.2.1'
 
     testCompile 'junit:junit:4.12'
 }
