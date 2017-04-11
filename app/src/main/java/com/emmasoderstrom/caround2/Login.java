@@ -247,7 +247,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         //mAuth.signOut();
     }
 
-    private String emailReplaceInvaid(String email){
+    public String emailReplaceInvaid(String email){
 
         String emailValid = email.replace(".", "%1%")
                 .replace("#", "%2%")

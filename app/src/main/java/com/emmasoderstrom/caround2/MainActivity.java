@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .child(thisUserID)
                             .getValue(Person.class);
                     chosenDistansInt = thisUser.getChosenDistansInt();
-                    updateChosenDistansText(chosenDistansInt);
+                    chosenDistansText.setText(updateChosenDistansText(chosenDistansInt));
                     Log.d("tag", "This  user " + thisUser.getFullName());
                 //}
             }
@@ -307,9 +307,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public void updateChosenDistansText(int thisUserDistans){
-        chosenDistansInt = thisUserDistans;
+    public String updateChosenDistansText(int thisUserDistans){
         Log.d("tag", "updateChosenDistansText ");
+
+        chosenDistansInt = thisUserDistans;
+        String chosenDistensString = null;
+
         if(thisUser != null) {
             int distansConverted;
             String distansValue;
@@ -318,19 +321,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 distansConverted = thisUserDistans;
                 distansValue = panelDistansM;
 
-                chosenDistansText.setText(distansConverted + " " + distansValue);
+                chosenDistensString = distansConverted + " " + distansValue;
+                //chosenDistansText.setText(distansConverted + " " + distansValue);
             } else if (thisUserDistans < 10000) {
                 Double distansConvertedDouble = Double.valueOf(thisUserDistans) / 1000;
                 distansValue = panelDistansKm;
 
-                chosenDistansText.setText(distansConvertedDouble + " " + distansValue);
+                chosenDistensString = distansConvertedDouble + " " + distansValue;
+                //chosenDistansText.setText(distansConvertedDouble + " " + distansValue);
             } else {
                 distansConverted = thisUserDistans / 10000;
                 distansValue = panelDistansMil;
 
-                chosenDistansText.setText(distansConverted + " " + distansValue);
+                chosenDistensString = distansConverted + " " + distansValue;
+                //chosenDistansText.setText(distansConverted + " " + distansValue);
             }
         }
+
+        return chosenDistensString;
+
     }
 
 
@@ -743,7 +752,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("tag", " click på en vän");
 
-                dialogViewListFriend.showDialogViewListFriend(getWindow().getContext());
+                dialogViewListFriend.showDialogViewListFriend(getWindow().getContext(), closePersonList.get(position));
 
                 }
             });

@@ -286,7 +286,7 @@ public class FriendHandler extends AppCompatActivity {
                     //ta bort från arraylistan som är koplad till list adaptern
                     friendAllowedPersonList.add(friendRequestsPersonList.get(i));
                     friendRequestsPersonList.remove(i);
-                    
+
                     //ny requestArray till databasen, med de personId som blir kvar.
                     ArrayList<String> tempNyReqList = new ArrayList<String>();
                     for (Person personReq : friendRequestsPersonList) {

@@ -70,6 +70,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+
+
+
         //hämtar google bild och sätter användar bild
         if (user != null) {
             userPic = user.getPhotoUrl();
@@ -81,7 +84,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
 
         InputFilter[] textLenght= new InputFilter[1];
-        textLenght[0] = new InputFilter.LengthFilter(20);
+        textLenght[0] = new InputFilter.LengthFilter(15);
         InputFilter[] phoneNumberLenght= new InputFilter[1];
         phoneNumberLenght[0] = new InputFilter.LengthFilter(10);
 
@@ -92,33 +95,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         lastName = (EditText)findViewById(R.id.creat_user_lastname);
         lastName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         lastName.setFilters(textLenght);
+        // TODO: 2017-04-11 ta bort mellanslag 
 
-
-        Locale[] locale = Locale.getAvailableLocales();
-        ArrayList<String> countries = new ArrayList<String>();
-        String country;
-        for( Locale loc : locale ){
-            country = loc.getDisplayCountry();
-            if( country.length() > 0 && !countries.contains(country) ){
-                countries.add( country );
-            }
-        }
-        Collections.sort(countries, String.CASE_INSENSITIVE_ORDER);
-
-        spinnerCountry = (Spinner)findViewById(R.id.spinner_country);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, countries);
-        spinnerCountry.setAdapter(adapter);
-
-        String phoneCountry = Locale.getDefault().getDisplayCountry();
-
-        Log.d("tag", "onCreate: phoneCountrie " + phoneCountry);
-        for (int i = 0; i < countries.size(); i++) {
-            Log.d("tag", "onCreate: phoneCountrie " + countries.get(i));
-            if(countries.get(i).equalsIgnoreCase(phoneCountry)){
-                spinnerCountry.setSelection(i);
-                break;
-            }
-        }
+        setContryChoses();
 
         telNumber = (EditText)findViewById(R.id.creat_user_telnumber);
         telNumber.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -189,6 +168,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 mDatabase.child("users").child(thisUserID).child("picString").setValue(userPicS);
                 mDatabase.child("users").child(thisUserID).child("firstName").setValue(firstName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
+                mDatabase.child("users").child(thisUserID).child("fullName").setValue(firstName.getText().toString() + lastName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());
             }
 
@@ -248,6 +228,32 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
             userBitmap = result;
             // Close progressdialog
             //mProgressDialog.dismiss();
+        }
+    }
+
+    public void setContryChoses(){
+        Locale[] locale = Locale.getAvailableLocales();
+        ArrayList<String> countries = new ArrayList<String>();
+        String country;
+        for( Locale loc : locale ){
+            country = loc.getDisplayCountry();
+            if( country.length() > 0 && !countries.contains(country) ){
+                countries.add( country );
+            }
+        }
+        Collections.sort(countries, String.CASE_INSENSITIVE_ORDER);
+
+        spinnerCountry = (Spinner)findViewById(R.id.spinner_country);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, countries);
+        spinnerCountry.setAdapter(adapter);
+
+        String phoneCountry = Locale.getDefault().getDisplayCountry();
+
+        for (int i = 0; i < countries.size(); i++) {
+            if(countries.get(i).equalsIgnoreCase(phoneCountry)){
+                spinnerCountry.setSelection(i);
+                break;
+            }
         }
     }
 }

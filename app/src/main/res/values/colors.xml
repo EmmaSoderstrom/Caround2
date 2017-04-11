@@ -10,7 +10,7 @@
 
 
     <color name="colorButtonNormal">#0096ad</color>
-    <color name="colorControlHighlight">#009688</color>
+    <color name="colorControlHighlight">#bdbdbd</color>
     <color name="colorControlActivated">#ffb74d</color>
     <color name="colorTabsActivated">#ffffffff</color>
     

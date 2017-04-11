@@ -49,6 +49,15 @@
     <string name="no_gps_button_turn_on">Starta gps</string>
     <string name="no_gps_button_granted">Godkänd gps</string>
 
+
+    <string name="dilog_header">Kontakt</string>
+    <string name="dilog_first_name">Förnamn</string>
+    <string name="dilog_last_name">Efternmn</string>
+    <string name="dilog_distans">Distans</string>
+    <string name="dilog_distans_subtext">Distans från person</string>
+    <string name="dilog_distans_subtext_part1"> befiner sig inom </string>
+    <string name="dilog_distans_subtext_part2"> från dig.</string>
+
     <!--
     Ändra avstånd dialog ruta
     -->
