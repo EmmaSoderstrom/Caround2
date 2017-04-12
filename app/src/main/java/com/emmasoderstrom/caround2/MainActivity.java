@@ -554,8 +554,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(3000)
-                .setFastestInterval(1000);
+                .setInterval(20 * 1000)
+                .setFastestInterval(10 * 1000);
 
         // Request location updates
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)

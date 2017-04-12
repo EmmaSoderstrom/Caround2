@@ -52,7 +52,7 @@
     Vyer när det inte finns några vänner nära
     -->
     <string name="no_friend_text_header">Inga vänner i närheten!</string>
-    <string name="no_friend_text_second_turn_on">Ändra ditt valda avståndet för att öka avsöknings området.\r\nDu måste ha vänner i din vänlista för att se dinna vänner</string>
+    <string name="no_friend_text_second_turn_on">Ändra ditt valda avståndet för att öka avsöknings området.\r\nDu måste ha vänner i din vänlista för att se dinna vänner.</string>
     <string name="no_friend_button_turn_on">Ändra avstånd</string>
 
     <!--
@@ -80,6 +80,18 @@
     <string name="friend_list_message">Vän</string>
     <string name="friend_tab_fri">Vänner</string>
     <string name="friend_tab_friReq">Vänförfrågningar</string>
+
+    <!--
+    Vänrequestsida no allowed
+    -->
+    <string name="no_friend_allow_text_header">Inga vänner!</string>
+    <string name="no_friend_allow_text_second">Du har inga vänner än.\r\nGör vänförfrågningar och godkänn vänförfrågningar för att få vänner.</string>
+
+    <!--
+    Vänrequestsida no request
+    -->
+    <string name="no_friend_req_text_header">Inga vänförfrågningar!</string>
+    <string name="no_friend_req_text_second">Ingen har gjort vän förfrågan till dig.\r\nProva att göra egna förfrågningar till dina vänner.</string>
 
     <!--
     Vänsida dialog

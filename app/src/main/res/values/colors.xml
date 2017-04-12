@@ -9,9 +9,9 @@
     <color name="colorAccent">#ffb74d</color>
 
 
-    <color name="colorButtonNormal">#0096ad</color>
+    <color name="colorButtonNormal">#ffb74d</color>
     <color name="colorControlHighlight">#bdbdbd</color>
-    <color name="colorControlActivated">#ffb74d</color>
+    <color name="colorControlActivated">#a1887f</color>
     <color name="colorTabsActivated">#ffffffff</color>
     
     <color name="textColoPrimary">#dd000000</color>

@@ -46,11 +46,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:id="@+id/list_close_friends"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_below="@id/top_text_continer">
-
-
     </ListView>
 
     <RelativeLayout
@@ -91,11 +87,20 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:gravity="center"
             android:layout_below="@+id/no_friend_close_text"/>
 
-        <Button
-            android:layout_width="match_parent"
+        <!--<Button-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:text="@string/no_friend_button_turn_on"-->
+            <!--android:onClick="onClickChangeDistans"/>-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/no_friend_button_turn_on"
+            android:src="@drawable/ic_mode_edit_white_24dp"
             android:onClick="onClickChangeDistans"/>
 
     </RelativeLayout>
@@ -138,11 +143,20 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:gravity="center"
             android:layout_below="@+id/permission_gps_text"/>
 
-        <Button
-            android:layout_width="match_parent"
+        <!--<Button-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:text="@string/no_gps_button_granted"-->
+            <!--android:onClick="onClickGpsPermission"/>-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/no_gps_button_granted"
+            android:src="@drawable/ic_done_white_24dp"
             android:onClick="onClickGpsPermission"/>
 
     </RelativeLayout>
@@ -185,11 +199,20 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:gravity="center"
             android:layout_below="@+id/gps_turn_on_text"/>
 
-        <Button
-            android:layout_width="match_parent"
+        <!--<Button-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:text="@string/no_gps_button_turn_on"-->
+            <!--android:onClick="onClickGpsTurnOn"/>-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/no_gps_button_turn_on"
+            android:src="@drawable/ic_place_white_24dp"
             android:onClick="onClickGpsTurnOn"/>
 
     </RelativeLayout>

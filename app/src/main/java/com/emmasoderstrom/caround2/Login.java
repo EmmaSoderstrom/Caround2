@@ -238,14 +238,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     public void goToInfo(View view){
-        FirebaseAuth.getInstance().signOut();
-        /*if(Auth.GoogleSignInApi){
 
-        }*/
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
-    public void logOut(){
+    public void logOut(View view){
         FirebaseAuth.getInstance().signOut();
         /*if(Auth.GoogleSignInApi){
 

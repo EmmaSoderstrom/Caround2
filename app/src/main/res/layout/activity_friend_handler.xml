@@ -53,15 +53,55 @@
                             android:id="@+id/friend_if_no_allowed"
                             android:visibility="invisible"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <TextView
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp">
+
+                            <ImageView
+                                android:id="@+id/friend_if_no_allowed_image"
+                                android:src="@drawable/ic_group_black_100dp"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_above="@+id/friend_if_no_allowed_text"/>
+
+                            <TextView
+                                android:id="@+id/friend_if_no_allowed_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="24dp"
+                                android:text="@string/no_friend_allow_text_header"
+                                android:textSize="24sp"
                                 android:gravity="center"
                                 android:layout_centerVertical="true"
-                                android:text="Inga vänner"
-                                android:textSize="40sp"/>
+                                />
+
+                            <TextView
+                                android:id="@+id/friend_if_no_allowed_text2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/no_friend_allow_text_second"
+                                android:textSize="12sp"
+                                android:gravity="center"
+                                android:layout_below="@+id/friend_if_no_allowed_text"/>
+
+
                         </RelativeLayout>
+
+                        <!--<RelativeLayout-->
+                            <!--android:id="@+id/friend_if_no_allowed"-->
+                            <!--android:visibility="invisible"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="match_parent">-->
+                            <!--<TextView-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:gravity="center"-->
+                                <!--android:layout_centerVertical="true"-->
+                                <!--android:text="Inga vänner"-->
+                                <!--android:textSize="40sp"/>-->
+                        <!--</RelativeLayout>-->
 
 
                         <ListView
@@ -93,16 +133,56 @@
                             android:id="@+id/friend_if_no_requests"
                             android:visibility="invisible"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp">
+
+                            <ImageView
+                                android:id="@+id/friend_if_no_requests_image"
+                                android:src="@drawable/ic_group_black_100dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_above="@+id/friend_if_no_requests_text"/>
 
                             <TextView
+                                android:id="@+id/friend_if_no_requests_text"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="24dp"
+                                android:text="@string/no_friend_req_text_header"
+                                android:textSize="24sp"
                                 android:gravity="center"
                                 android:layout_centerVertical="true"
-                                android:text="Inga vänförfrågningar"
-                                android:textSize="40sp"/>
+                                />
+
+                            <TextView
+                                android:id="@+id/friend_if_no_requests_text2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/no_friend_req_text_second"
+                                android:textSize="12sp"
+                                android:gravity="center"
+                                android:layout_below="@+id/friend_if_no_requests_text"/>
+
+
                         </RelativeLayout>
+
+                        <!--<RelativeLayout-->
+                            <!--android:id="@+id/friend_if_no_requests"-->
+                            <!--android:visibility="invisible"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="match_parent">-->
+
+                            <!--<TextView-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:gravity="center"-->
+                                <!--android:layout_centerVertical="true"-->
+                                <!--android:text="Inga vänförfrågningar"-->
+                                <!--android:textSize="40sp"/>-->
+                        <!--</RelativeLayout>-->
 
 
                         <ListView
