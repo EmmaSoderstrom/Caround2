@@ -54,7 +54,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         mAuth = FirebaseAuth.getInstance();
 
 
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -244,7 +243,14 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         }*/
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-        //mAuth.signOut();
+    }
+
+    public void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        /*if(Auth.GoogleSignInApi){
+
+        }*/
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     public String emailReplaceInvaid(String email){

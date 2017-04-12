@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -38,6 +40,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.plus.Plus;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,8 +57,7 @@ import static com.emmasoderstrom.caround2.FriendHandler.MY_PERMISSIONS_REQUEST_R
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
     public static final String USER_ID_KEY = "userIdKey";
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     int REQUEST_CHECK_SETTINGS = 100;
     final static int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
+    final static int REQUEST_LOCATION = 199;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
@@ -92,7 +95,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     ListView listCloseFriends;
     RelativeLayout gpsNotOn;
-    final static int REQUEST_LOCATION = 199;
+    RelativeLayout noFriendClose;
+
 
 
 
@@ -110,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         thisUserID = message;
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        /*mGPlusSignInFragment =
+                PlusClientFragment.getPlusClientFragment(this, MomentUtil.ACTIONS);*/
 
         mapApiCreat();
         //checkPermissionGPS();
@@ -130,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         personList = new PersonList(this, 0);
         //creatFakeUser();
 
+        noFriendClose = (RelativeLayout)findViewById(R.id.no_friend_close);
         listCloseFriends = (ListView)findViewById(R.id.list_close_friends);
         gpsNotOn = (RelativeLayout)findViewById(R.id.gps_not_on);
 
@@ -264,36 +271,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
-                //FirebaseAuth.getInstance().signOut();
-                //Auth.GoogleSignInApi.signOut();
 
-                /*GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
-                        .build();
+                /*FirebaseAuth.getInstance().signOut();
+                finish();*/
 
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        .enableAutoManage(this, this)
-                        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                        .build();
+                /*FirebaseAuth.getInstance().signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                Log.d("tag", "mainactivity menu_sing_out2");
+                finish();*/
 
-                mGoogleApiClient.connect();
 
-                if(mGoogleApiClient.isConnected()){
-                    Log.d("tag", "mGoogleApiClient conecktad");
-                    FirebaseAuth.getInstance().signOut();
-                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                }else{
-                    Log.d("tag", "mGoogleApiClient inte conecktad");
-                }*/
 
-                //if (view == buttonLogout) {
-                    //firebaseAuth.signOut();
-                    FirebaseAuth.getInstance().signOut();
-                    finish();
-                    //startActivity(new Intent(this, SignActivity.class));
-                //}
-
+                Log.d("tag", "mainactivity menu_sing_out4");
                 thisUser = null;
                 intent = new Intent(this, Login.class);
                 startActivity(intent);
@@ -302,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     public String updateChosenDistansText(int thisUserDistans){
         Log.d("tag", "updateChosenDistansText ");
@@ -338,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
 
-
     /**
      * Karta
      */
@@ -364,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void onStop() {
         Log.d("tag", "Stop");
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -546,11 +535,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * Knappar för att starta dialogruror om gps
      * @param view
      */
-    public void gpsPermission(View view){
+    public void onClickGpsPermission(View view){
         checkPermissionGPS();
     }
-    public void gpsTurnOn(View view){
+    public void onClickGpsTurnOn(View view){
         checkGPSOn();
+    }
+    public void onClickChangeDistans(View view){
+        dialogChangeDistans.showDialogChangeDistans(this, chosenDistansInt);
     }
 
 
@@ -682,7 +674,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 }
 
-                
+
 
                 String numberOfFriensString = String.valueOf(closePersonList.size());
                 numberOfFriendsText.setText(numberOfFriensString + " " + panelNumberOfFriends);
@@ -746,15 +738,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             });
 
+            viewNoFriendClose();
+
         }else{
             Log.d("tag", "createList notifyDataSetChanged");
             adapter.notifyDataSetChanged();
             //updatedData(adapter);
+
+            viewNoFriendClose();
         }
     }
 
-   /* @Override
-    public void onResult(@NonNull Result result) {
+    public void viewNoFriendClose(){
+        if(closePersonList.size() < 1){
+            noFriendClose.setVisibility(VISIBLE);
+        }else{
+            noFriendClose.setVisibility(INVISIBLE);
+        }
+    }
 
-    }*/
 }

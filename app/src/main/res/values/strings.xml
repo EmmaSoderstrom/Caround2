@@ -38,18 +38,26 @@
 
     <string name="button_busy">Upptagen</string>
 
-    <string name="settings">Inställningar</string>
-    <string name="edit">Ändra</string>
-    <string name="exit">Logga ut</string>
-    <string name="title_activity_maps">Map</string>
-
+    <!--
+    Vyer när gps inte är godkänd eller på
+    -->
     <string name="no_gps_text_header">Hittar inte gps!</string>
     <string name="no_gps_text_second_turn_on">Kontrollera att mobilens gps är på.</string>
-    <string name="no_gps_text_second_granted">Du måste godkänna att gps användning för C around</string>
     <string name="no_gps_button_turn_on">Starta gps</string>
+
+    <string name="no_gps_text_second_granted">Du måste godkänna att gps användning för C around</string>
     <string name="no_gps_button_granted">Godkänd gps</string>
 
+    <!--
+    Vyer när det inte finns några vänner nära
+    -->
+    <string name="no_friend_text_header">Inga vänner i närheten!</string>
+    <string name="no_friend_text_second_turn_on">Ändra ditt valda avståndet för att öka avsöknings området.\r\nDu måste ha vänner i din vänlista för att se dinna vänner</string>
+    <string name="no_friend_button_turn_on">Ändra avstånd</string>
 
+    <!--
+    Dialog klickad vän
+    -->
     <string name="dilog_header">Kontakt</string>
     <string name="dilog_first_name">Förnamn</string>
     <string name="dilog_last_name">Efternmn</string>

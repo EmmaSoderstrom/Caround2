@@ -54,7 +54,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
     </ListView>
 
     <RelativeLayout
-        android:visibility="invisible"
+        android:visibility="visible"
         android:id="@+id/no_friend_close"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -68,25 +68,26 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:src="@drawable/ic_group_black_100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"/>
+            android:layout_above="@+id/no_friend_close_text"/>
 
         <TextView
             android:id="@+id/no_friend_close_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="@string/no_gps_text_header"
+            android:text="@string/no_friend_text_header"
             android:textSize="24sp"
             android:gravity="center"
-            android:layout_below="@+id/no_friend_close_image"/>
+            android:layout_centerVertical="true"
+            />
 
         <TextView
             android:id="@+id/no_friend_close_text2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/no_gps_text_second_turn_on"
-            android:textSize="16sp"
+            android:text="@string/no_friend_text_second_turn_on"
+            android:textSize="12sp"
             android:gravity="center"
             android:layout_below="@+id/no_friend_close_text"/>
 
@@ -94,8 +95,8 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="@string/no_gps_button_turn_on"
-            android:onClick="gpsTurnOn"/>
+            android:text="@string/no_friend_button_turn_on"
+            android:onClick="onClickChangeDistans"/>
 
     </RelativeLayout>
 
@@ -114,7 +115,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:src="@drawable/ic_my_location_black_100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"/>
+            android:layout_above="@+id/permission_gps_text"/>
 
         <TextView
             android:id="@+id/permission_gps_text"
@@ -124,7 +125,8 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:text="@string/no_gps_text_header"
             android:textSize="24sp"
             android:gravity="center"
-            android:layout_below="@+id/permission_location_image"/>
+            android:layout_centerVertical="true"
+            />
 
         <TextView
             android:id="@+id/permission_gps_text2"
@@ -132,7 +134,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@string/no_gps_text_second_granted"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:layout_below="@+id/permission_gps_text"/>
 
@@ -141,7 +143,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:text="@string/no_gps_button_granted"
-            android:onClick="gpsPermission"/>
+            android:onClick="onClickGpsPermission"/>
 
     </RelativeLayout>
 
@@ -160,7 +162,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:src="@drawable/ic_my_location_black_100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"/>
+            android:layout_above="@+id/gps_turn_on_text"/>
 
         <TextView
             android:id="@+id/gps_turn_on_text"
@@ -170,7 +172,8 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:text="@string/no_gps_text_header"
             android:textSize="24sp"
             android:gravity="center"
-            android:layout_below="@+id/gps_location_image"/>
+            android:layout_centerVertical="true"
+            />
 
         <TextView
             android:id="@+id/gps_turn_on_text2"
@@ -178,7 +181,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@string/no_gps_text_second_turn_on"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:layout_below="@+id/gps_turn_on_text"/>
 
@@ -187,7 +190,7 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:text="@string/no_gps_button_turn_on"
-            android:onClick="gpsTurnOn"/>
+            android:onClick="onClickGpsTurnOn"/>
 
     </RelativeLayout>
 

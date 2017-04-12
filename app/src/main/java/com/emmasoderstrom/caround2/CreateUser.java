@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -95,7 +96,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         lastName = (EditText)findViewById(R.id.creat_user_lastname);
         lastName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         lastName.setFilters(textLenght);
-        // TODO: 2017-04-11 ta bort mellanslag 
+        // TODO: 2017-04-11 ta bort mellanslag
 
         setContryChoses();
 
