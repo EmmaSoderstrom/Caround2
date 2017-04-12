@@ -55,6 +55,52 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
 
     <RelativeLayout
         android:visibility="invisible"
+        android:id="@+id/no_friend_close"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@id/toolbar">
+
+        <ImageView
+            android:id="@+id/no_friend_close_image"
+            android:src="@drawable/ic_group_black_100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/no_friend_close_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/no_gps_text_header"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_below="@+id/no_friend_close_image"/>
+
+        <TextView
+            android:id="@+id/no_friend_close_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/no_gps_text_second_turn_on"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_below="@+id/no_friend_close_text"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/no_gps_button_turn_on"
+            android:onClick="gpsTurnOn"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:visibility="invisible"
         android:id="@+id/permission_not_granted"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
