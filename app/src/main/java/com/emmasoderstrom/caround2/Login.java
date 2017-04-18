@@ -95,7 +95,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                 }
             }
         };
-
+        //bolian för att logga ut användaren om de är inloggade när de kommer till sidan.
         ifFirstLogout = true;
 
 
@@ -142,6 +142,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
 
     private void signIn(){
         Log.d("tag", "signIn");
+        //mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -150,6 +151,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         Log.d("tag", "logOut");
         if(mGoogleApiClient.isConnected()) {
             Log.d("tag", "logOut mGoogleApiClient isConnected");
+            mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue(false);
+
             FirebaseAuth.getInstance().signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         }
@@ -197,18 +200,22 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                /*Log.d("tag", "Login intent 999999 " );
                 Log.d("tag", "Lkollar match med databas");
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
                     Person user = snap.getValue(Person.class);
-                    String userId = user.getPersonId();*/
+                    String userId = user.getPersonId();
 
-                    /*if(userId.equals(userUID)){
-                        goToMain();
-                    }else {*/
+                    if(userId.equals(userUID)){
+                        //goToMain();
+                        Log.d("tag", "onDataChange: händer dettta ------------>>>>>");
+                        //mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue(true);
                         goToCreat();
-                    /*}*/
-                //}
+                        break;
+                    }else {
+                        goToCreat();
+                        break;
+                    }
+                }
             }
 
             @Override

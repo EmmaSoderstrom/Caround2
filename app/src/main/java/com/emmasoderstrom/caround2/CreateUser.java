@@ -171,6 +171,8 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("fullName").setValue(firstName.getText().toString() + lastName.getText().toString());
                 mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());
+                mDatabase.child("users").child(thisUserID).child("ifLoggedIn").setValue(true);
+
             }
 
             Intent intent = new Intent(this, MainActivity.class);

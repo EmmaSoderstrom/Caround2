@@ -278,14 +278,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
 
-
                 if(mGoogleApiClient != null ){
                     mGoogleApiClient.disconnect();
                 }
-
-
-                Log.d("tag", "mainactivity menu_sing_out4");
                 thisUser = null;
+
                 intent = new Intent(this, Login.class);
                 startActivity(intent);
                 return true;
@@ -594,6 +591,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
+        Log.d("tag", "setThisUsersNewLocation:System.currentTimeMillis() " + System.currentTimeMillis()/1000);
+            mDatabase.child("users").child(thisUserID).child("lastUpdateLocation").setValue(System.currentTimeMillis()/1000);
+
+
+
             //updateListOfClosePerson();
 
         //}else{
@@ -644,8 +646,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             distanceInM = getDistanBetween(personB);
 
                             //om denna användare och personB valda avstånd är mindre eller lika som avståndet imellan dem
+                            //samt att personB senaste position ska ha uppdateras senast
+                            //och om personB är inloggad
                             //läggs personB till i personList.closePersonArrayList
-                            if (distanceInM <= thisUser.getChosenDistansInt() && distanceInM <= personB.getChosenDistansInt()) {
+                            if (distanceInM <= thisUser.getChosenDistansInt()
+                                    && checkTimeDistance(personB) <= 60 * 10
+                                    && distanceInM <= personB.getChosenDistansInt()
+                                    && personB.getIfLoggedIn()) {
                                 personB.setDistansBetween(distanceInM);
                                 closePersonList.add(personB);
                             }
@@ -714,6 +721,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         double distance = SphericalUtil.computeDistanceBetween(mPositionA, mPositionB);
         int distanceInM = (int) distance;
         return distanceInM;
+    }
+
+    public double checkTimeDistance(Person personB){
+        double timeDistance = personB.getLastUpdateLocation() - System.currentTimeMillis()/1000;
+        return timeDistance;
     }
 
     /**

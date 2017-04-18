@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class Person {
 
+    boolean ifLoggedIn;
     String picString;
     String personId;
     String firstName;
@@ -20,6 +21,7 @@ public class Person {
     Location location;
     double locationLatitude;
     double locationLongitude;
+    double lastUpdateLocation;
     int distansBetween;
 
 
@@ -35,6 +37,7 @@ public class Person {
                   String country, String startPhoneNumber, int startChosenDistance,
                   ArrayList<String> friendRequestsId, ArrayList<String> friendSendedRequests, ArrayList<String> friendAllowed){
 
+        ifLoggedIn = true;
         this.picString = picString;
         this.personId = personId;
 
@@ -61,6 +64,10 @@ public class Person {
         locationLatitude = startLocationLatitude;
         locationLongitude = startLocationLongitude;
 
+    }
+
+    public boolean getIfLoggedIn(){
+        return ifLoggedIn;
     }
 
     public String getPicString() {
@@ -131,6 +138,13 @@ public class Person {
         locationLongitude = longitude;
     }
 
+    public double getLastUpdateLocation() {
+        return lastUpdateLocation;
+    }
+
+    public void setLastUpdateLocation(double lastUpdateLocation) {
+        this.lastUpdateLocation = lastUpdateLocation;
+    }
 
     public int getDistansBetween(){
         return distansBetween;
