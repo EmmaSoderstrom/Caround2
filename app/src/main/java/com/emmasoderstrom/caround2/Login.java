@@ -2,6 +2,7 @@ package com.emmasoderstrom.caround2;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -27,8 +29,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class Login extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
+
+    private boolean ifFirstLogout;
     private static int RC_SIGN_IN = 0;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
@@ -36,9 +41,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     private DatabaseReference mDatabase;
     String userEmail;
     String userUID;
-    public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
 
-    String thisPersonPhoneId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +57,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         mAuth = FirebaseAuth.getInstance();
 
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-
-                if(user != null) {
-                    Log.d("AUTH", "user logged in: " + user.getEmail());
-                    userEmail = user.getEmail();
-                    userUID = user.getUid();
-
-                }else {
-                    Log.d("AUTH", "user logged out.");
-                }
-            }
-        };
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -77,76 +64,106 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
+                .addConnectionCallbacks(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        //findViewById(R.id.sign_out_button).setOnClickListener(this);
 
 
-
-
-
-
-
-
-
-
-        // kolla om användaen har konto och är inloggad
-
-/*        thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                Log.d("tag", "Login händer detta");
-                for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
-                    Person user = snap.getValue(Person.class);
-                    String userId = user.getPersonId();
+                if(user != null) {
+                    Log.d("tag", "user logged in: " + user.getEmail());
+                    userEmail = user.getEmail();
+                    userUID = user.getUid();
 
-                    if(userId.equals(thisPersonPhoneId)){
 
-                        if(user.getSignedIn()) {
-                            goToMain(getWindow().getDecorView().getRootView());
-                            break;
-                        }else{
-                            Button loginButton = (Button)findViewById(R.id.login);
-                            Button creatButton = (Button)findViewById(R.id.creat);
-                            loginButton.setVisibility(View.VISIBLE);
-                            creatButton.setVisibility(View.INVISIBLE);
-                        }
-                    }
+                }else {
+                    Log.d("tag", "user logged out.");
+                    ifFirstLogout = false;
+                }
+
+                if(user != null && ifFirstLogout){
+                    Log.d("tag", "if first logga ut. user logged in: " + user.getEmail());
+                    ifFirstLogout = false;
+                    logOut();
                 }
             }
+        };
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        ifFirstLogout = true;
 
-            }
-        });*/
+
+//        // kolla om användaen har konto och är inloggad
+//
+///*        thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+//        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                Log.d("tag", "Login händer detta");
+//                for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
+//                    Person user = snap.getValue(Person.class);
+//                    String userId = user.getPersonId();
+//
+//                    if(userId.equals(thisPersonPhoneId)){
+//
+//                        if(user.getSignedIn()) {
+//                            goToMain(getWindow().getDecorView().getRootView());
+//                            break;
+//                        }else{
+//                            Button loginButton = (Button)findViewById(R.id.login);
+//                            Button creatButton = (Button)findViewById(R.id.creat);
+//                            loginButton.setVisibility(View.VISIBLE);
+//                            creatButton.setVisibility(View.INVISIBLE);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });*/
 
     }
-
-
-
-
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+    public void onClick(View v) {
+        Log.d("tag", "onClick");
+        signIn();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mAuthListener != null)
-            mAuth.removeAuthStateListener(mAuthListener);
+    private void signIn(){
+        Log.d("tag", "signIn");
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
+    public void logOut(){
+        Log.d("tag", "logOut");
+        if(mGoogleApiClient.isConnected()) {
+            Log.d("tag", "logOut mGoogleApiClient isConnected");
+            FirebaseAuth.getInstance().signOut();
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        }
+    }
+
+    /*public void logOut(View view){
+        FirebaseAuth.getInstance().signOut();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("tag", "onActivityResult" );
         if(requestCode == RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
@@ -161,6 +178,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
+        Log.d("tag", "firebaseAuthWithGoogle" );
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -170,33 +188,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
                         checkIfToCreatuser();
 
-
                         }
                     });
-    }
-
-    private void signIn(){
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void signOut(){
-        FirebaseAuth.getInstance().signOut();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("tag", "Connection failed.");
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.sign_in_button:
-                signIn();
-                break;
-        }
     }
 
     public void checkIfToCreatuser(){
@@ -204,17 +197,18 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                /*Log.d("tag", "Login intent 999999 " );
                 Log.d("tag", "Lkollar match med databas");
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
                     Person user = snap.getValue(Person.class);
-                    String userId = user.getPersonId();
+                    String userId = user.getPersonId();*/
 
                     /*if(userId.equals(userUID)){
                         goToMain();
                     }else {*/
                         goToCreat();
                     /*}*/
-                }
+                //}
             }
 
             @Override
@@ -232,23 +226,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         startActivity(intent);
     }
 
-    public void goToMain(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    public void goToInfo(View view){
-
-    }
-
-    public void logOut(View view){
-        FirebaseAuth.getInstance().signOut();
-        /*if(Auth.GoogleSignInApi){
-
-        }*/
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-    }
-
     public String emailReplaceInvaid(String email){
 
         String emailValid = email.replace(".", "%1%")
@@ -258,5 +235,21 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 .replace("]", "%5%");
 
         return emailValid;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("tag", "onConnected" );
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("tag", "onConnectionFailed" );
     }
 }
