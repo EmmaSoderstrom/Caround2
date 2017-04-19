@@ -113,7 +113,8 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/toolbar"
+        android:background="@color/colorBackgrund">
 
         <ImageView
             android:id="@+id/permission_location_image"
@@ -169,7 +170,8 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/toolbar"
+        android:background="@color/colorBackgrund">
 
         <ImageView
             android:id="@+id/gps_location_image"

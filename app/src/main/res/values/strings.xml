@@ -67,6 +67,12 @@
     <string name="dilog_distans_subtext_part2"> från dig.</string>
 
     <!--
+    Notifickation
+    -->
+    <string name="notification_one_friend_close"> ny vän nära dig!</string>
+    <string name="notification_multi_friend_close"> nya vänner nära dig!</string>
+
+    <!--
     Ändra avstånd dialog ruta
     -->
     <string name="dia_change_distans_message">Ända avstånd</string>

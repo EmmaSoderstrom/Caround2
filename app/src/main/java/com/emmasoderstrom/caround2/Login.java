@@ -1,6 +1,8 @@
 package com.emmasoderstrom.caround2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -29,9 +31,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.emmasoderstrom.caround2.MainActivity.sharedPreferences;
+
 public class Login extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
     public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
+    public static final String USER_ID_KEY = "userIdKey";
+    public static SharedPreferences sharedPreferences;
+    public static String thisUserID;
 
     private boolean ifFirstLogout;
     private static int RC_SIGN_IN = 0;
@@ -230,6 +238,13 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         String emailValid = emailReplaceInvaid(userEmail);
         Log.d("tag", "goToCreat: emailValid " + emailValid);
         intent.putExtra(EXTRA_MESSAGE, emailValid);
+
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
+        thisUserID = emailValid;
+
+
         startActivity(intent);
     }
 

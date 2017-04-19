@@ -192,19 +192,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
     // DownloadImage AsyncTask
     private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
 
-        /*@Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Create a progressdialog
-            mProgressDialog = new ProgressDialog(MainActivity.this);
-            // Set progressdialog title
-            mProgressDialog.setTitle("Download Image Tutorial");
-            // Set progressdialog message
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            // Show progressdialog
-            mProgressDialog.show();
-        }*/
 
         @Override
         protected Bitmap doInBackground(String... URL) {

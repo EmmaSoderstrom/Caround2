@@ -63,6 +63,7 @@ import static com.emmasoderstrom.caround2.FriendHandler.MY_PERMISSIONS_REQUEST_R
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    boolean appIsInForegroundMode;
     public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
 
     public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
@@ -112,12 +113,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
+        //mNotificationManager.cancel(0);
 
-        Intent intent = getIntent();
+        thisUserID = Login.thisUserID;
+        Log.d("tag", "onCreate: detta är det jag ska tittta på" + thisUserID);
+
+        /*Intent intent = getIntent();
         String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
-        thisUserID = message;
+        thisUserID = message;*/
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         /*mGPlusSignInFragment =
@@ -156,20 +159,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                /*if(thisUser != null) {
-                    Log.d("tag", "<----------------spelare INTE null------------------>>>>>>>>>>");
-                    chosenDistansInt = thisUser.getChosenDistansInt();
-                    updateChosenDistansText(chosenDistansInt);
-                }else{*/
-                    Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
+                Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
 
-                    thisUser = dataSnapshot.child("users")
-                            .child(thisUserID)
-                            .getValue(Person.class);
+                thisUser = dataSnapshot.child("users")
+                        .child(thisUserID)
+                        .getValue(Person.class);
 
-                    chosenDistansInt = thisUser.getChosenDistansInt();
-                    chosenDistansText.setText(updateChosenDistansText(chosenDistansInt));
-                //}
+                chosenDistansInt = thisUser.getChosenDistansInt();
+                chosenDistansText.setText(updateChosenDistansText(chosenDistansInt));
+
             }
 
             @Override
@@ -186,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
 
                 if(thisUser != null) {
-                    Log.d("tag", "onDataChange: mDatabase -------------->>>>><" + thisUser);
                     updateListOfClosePerson();
                 }
             }
@@ -217,15 +214,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //
 //    }
 //
-//    private void writeNewUser(String startPersonId, String startFirstName, String startLastName, String startPhoneNumber, int startChosenDistans, boolean startSignedIn,
-//                              double startLocationLatitude, double startLocationLongitude) {
-//        Person personClass = new Person(startPersonId, startFirstName, startLastName, startPhoneNumber, startChosenDistans,
-//                startLocationLatitude, startLocationLongitude);
-//
-//        personList.allPersonArrayList.add(personClass);
-//        mDatabase.child("users").child(startPersonId).setValue(personClass);
-//
-//    }
+
 
 
 
@@ -354,6 +343,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d("tag", "Stop");
         //mGoogleApiClient.disconnect();
         super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("tag", "onPause");
+        super.onPause();
+        appIsInForegroundMode = false;
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d("tag", "onResume");
+        super.onResume();
+        appIsInForegroundMode = true;
     }
 
 
@@ -650,7 +653,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             //och om personB är inloggad
                             //läggs personB till i personList.closePersonArrayList
                             if (distanceInM <= thisUser.getChosenDistansInt()
-                                    && checkTimeDistance(personB) <= 60 * 10
+                                    && checkTimeDistance(personB) <= 60 * 60
                                     && distanceInM <= personB.getChosenDistansInt()
                                     && personB.getIfLoggedIn()) {
                                 personB.setDistansBetween(distanceInM);
@@ -662,7 +665,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             //kollar i closePersonList om det är någon som ska bort
                             int distanceInM = getDistanBetween(personB);
 
-                            if (distanceInM > thisUser.getChosenDistansInt() || distanceInM > personB.getChosenDistansInt()) {
+                            if (distanceInM > thisUser.getChosenDistansInt()
+                                    || distanceInM > personB.getChosenDistansInt()
+                                    || personB.getIfLoggedIn() == false) {
 
                                 for (Person personBToRemove:closePersonList) {
                                     if(personBToRemove.getPersonId().equals(personB.getPersonId())){
@@ -757,29 +762,94 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }else{
             Log.d("tag", "createList notifyDataSetChanged");
             adapter.notifyDataSetChanged();
-            //updatedData(adapter);
 
             viewNoFriendClose();
+
+
         }
 
-        if(closePersonList.size() > 0 ){
+        Log.d("tag", "createList: appIsInForegroundMode " + appIsInForegroundMode);
+        //if(appIsInForegroundMode == false) {
+            sendNotification(closePersonList);
+        //}
 
+    }
+
+    public void viewNoFriendClose(){
+        if(closePersonList.size() < 1){
+            noFriendClose.setVisibility(VISIBLE);
+        }else{
+            noFriendClose.setVisibility(INVISIBLE);
+        }
+    }
+
+
+    ArrayList<Person> lastNotiArray = new ArrayList<>();
+    public void sendNotification(ArrayList<Person> closePersonList){
+        Log.d("tag", "sendNotification");
+        String notiTitle = null;
+        String notiText = null;
+        boolean ifChanges = false;
+
+
+        ArrayList<Person> notiArrayTemp = new ArrayList<>();
+
+        for (Person personB : closePersonList) {
+            if(lastNotiArray.contains(personB)){
+                //notiArrayTemp.add(personB);
+            }else{
+                notiArrayTemp.add(personB);
+                ifChanges = true;
+            }
+        }
+
+        Log.d("tag", "sendNotification:notiArrayTemp  " + notiArrayTemp);
+
+        if(notiArrayTemp.size() == 1){
+            //numberFriendClose = getString(R.string.notification_one_friend_close);
+            notiTitle = notiArrayTemp.get(0).getFullName();
+            String distansBetween = updateChosenDistansText(notiArrayTemp.get(0).getDistansBetween());
+            notiText = distansBetween;
+        }else if (notiArrayTemp.size() > 1){
+            String numberFriendClose = getString(R.string.notification_multi_friend_close);
+            notiTitle = notiArrayTemp.size() + " " + numberFriendClose;
+
+            String notiTextFullString = "";
+            for (Person personBTemp : notiArrayTemp) {
+                String personBName = personBTemp.getFullName();
+                String distansBetween = updateChosenDistansText(personBTemp.getDistansBetween());
+                String personBTempNoitTixt = personBName + " " + distansBetween + ", ";
+                notiTextFullString = notiTextFullString + personBTempNoitTixt;
+            }
+
+            notiText = notiTextFullString;
+
+        }
+
+
+        if(notiArrayTemp.size() > 0 && ifChanges && appIsInForegroundMode == false) {
+            Log.d("tag", "sendNotification: om ändring _____--------->");
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("My notification")
-                            .setContentText("Hello World!");
-// Creates an explicit intent for an Activity in your app
+                            //.setContentTitle(notiTitle)
+                            //.setContentText(notiText)
+                            .setContentTitle("hej")
+                            .setContentText("test")
+                            .setAutoCancel(true)
+                            //.setOngoing(false)
+                            ;
+            // Creates an explicit intent for an Activity in your app
             Intent resultIntent = new Intent(this, MainActivity.class);
 
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
+            // Adds the back stack for the Intent (but not the Intent itself)
             stackBuilder.addParentStack(MainActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
+            // Adds the Intent that starts the Activity to the top of the stack
             stackBuilder.addNextIntent(resultIntent);
             PendingIntent resultPendingIntent =
                     stackBuilder.getPendingIntent(
@@ -789,18 +859,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mBuilder.setContentIntent(resultPendingIntent);
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
+            // mId allows you to update the notification later on.
             int myId = 0;
             mNotificationManager.notify(myId, mBuilder.build());
-        }
-    }
 
-    public void viewNoFriendClose(){
-        if(closePersonList.size() < 1){
-            noFriendClose.setVisibility(VISIBLE);
-        }else{
-            noFriendClose.setVisibility(INVISIBLE);
+
+            //när notifikation är gjort gör en ny lastNotiArray
+            /*lastNotiArray.clear();
+            for (Person personB : closePersonList) {
+                lastNotiArray.add(personB);
+            }*/
         }
+        /*if(appIsInForegroundMode == true || notiArrayTemp.size() == 0){
+            mNotificationManager.cancel(myId);
+        }*/
     }
 
 }

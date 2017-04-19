@@ -3,6 +3,7 @@
 
     <!--indigo800-->
     <!--<color name="colorPrimary">#283593</color>-->
+    <color name="colorBackgrund">#ffffff</color>
     <color name="colorPrimary">#673ab7</color>
     <color name="colorPrimaryDark">#512da8</color>
 
