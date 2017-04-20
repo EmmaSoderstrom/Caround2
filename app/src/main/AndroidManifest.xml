@@ -29,6 +29,17 @@
 
         <activity android:name=".CreateUser" />
         <activity android:name=".FriendHandler"></activity>
+
+
+        <receiver android:name=".MyGpsRec">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <!--<action android:name="android.location.GPS_ENABLED_CHANGE" />-->
+                <!--<action android:name="android.location.GPS_DISABLED_CHANGE" />-->
+
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

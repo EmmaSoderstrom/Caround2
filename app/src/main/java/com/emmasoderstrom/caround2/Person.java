@@ -29,6 +29,8 @@ public class Person {
     ArrayList<String> friendSendedRequests = new ArrayList<String>();
     ArrayList<String> friendAllowed = new ArrayList<String>();
 
+    boolean notiIsCheckt;
+
     public Person(){
 
     }
@@ -50,6 +52,8 @@ public class Person {
         this.friendRequestsId = friendRequestsId;
         this.friendSendedRequests = friendSendedRequests;
         this.friendAllowed = friendAllowed;
+
+        notiIsCheckt = true;
 
     }
 
@@ -187,5 +191,11 @@ public class Person {
         this.friendAllowed = friendAllowed;
     }
 
+    public boolean getNotiIsCheckt(){
+        return notiIsCheckt;
+    }
 
+    public void setNotiIsCheckt(boolean notiIsCheckt) {
+        this.notiIsCheckt = notiIsCheckt;
+    }
 }

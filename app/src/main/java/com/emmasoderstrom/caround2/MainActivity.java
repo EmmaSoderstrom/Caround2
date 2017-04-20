@@ -9,6 +9,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -64,7 +65,8 @@ import static com.emmasoderstrom.caround2.FriendHandler.MY_PERMISSIONS_REQUEST_R
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    boolean appIsInForegroundMode;
+    private static MainActivity insMain;
+
     public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
 
     public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Toolbar toolbar;
     DialogChangeDistansOneWheel dialogChangeDistans;
     DialogViewListFriend dialogViewListFriend;
+
+    boolean appIsInForegroundMode;
 
     int REQUEST_CHECK_SETTINGS = 100;
     final static int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
@@ -99,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ArrayList<Person> closePersonList = new ArrayList<Person>();
     MainListContiner adapter;
     ListView listView = null;
-    //String thisPersonPhoneId;
 
     ListView listCloseFriends;
     RelativeLayout gpsNotOn;
@@ -118,18 +121,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mNotificationManager.cancel(0);
+        insMain = this;
 
         thisUserID = Login.thisUserID;
         Log.d("tag", "onCreate: detta är det jag ska tittta på" + thisUserID);
 
-        /*Intent intent = getIntent();
-        String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
-        thisUserID = message;*/
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        /*mGPlusSignInFragment =
-                PlusClientFragment.getPlusClientFragment(this, MomentUtil.ACTIONS);*/
 
         mapApiCreat();
         //checkPermissionGPS();
@@ -148,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setThisUser();
 
         personList = new PersonList(this, 0);
-        //creatFakeUser();
 
         noFriendClose = (RelativeLayout)findViewById(R.id.no_friend_close);
         listCloseFriends = (ListView)findViewById(R.id.list_close_friends);
@@ -156,9 +153,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
+    public static MainActivity  getInstace(){
+        return insMain;
+    }
+
     protected void onStart() {
         Log.d("tag", "Start");
         mGoogleApiClient.connect();
+        checkGPSOn();
         super.onStart();
     }
 
@@ -182,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         appIsInForegroundMode = true;
         oldFriendNotiArray.clear();
     }
+
+
 
     public void setThisUser(){
         Log.d("tag", "setThisUser");
@@ -292,10 +296,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_notification:
                 Log.d("tag", "mainactivity menu_notification");
+                //MenuItem notiItemMenu = (MenuItem)findViewById(R.id.menu_notification);
+                if(item.isChecked()){
+                    item.setChecked(false);
+                    //notiIsCheckt = false;
+                    mDatabase.child("users").child(thisUserID).child("notiIsCheckt").setValue(false);
+                }else{
+                    item.setChecked(true);
+                    //notiIsCheckt = true;
+                    mDatabase.child("users").child(thisUserID).child("notiIsCheckt").setValue(true);
+                }
                 return true;
-            case R.id.menu_busy:
-                Log.d("tag", "mainactivity menu_busy");
-                return true;
+//            case R.id.menu_busy:
+//                Log.d("tag", "mainactivity menu_busy");
+//                return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
 
@@ -365,8 +379,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
 
-
-
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("tag", "onConnected");
@@ -391,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 startLocationUpdates();
             }else {
                 startLocationUpdates();
-                checkGPSOn();
+                //checkGPSOn();
             }
         }
     }
@@ -450,56 +462,56 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void checkGPSOn(){
 
-        PendingResult<LocationSettingsResult> result;
+        //if (mLocationRequest == null) {
+            PendingResult<LocationSettingsResult> result;
 
-        //Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Platsen hittas inte", Toast.LENGTH_SHORT).show();
 
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(30 * 1000);
-        mLocationRequest.setFastestInterval(5 * 1000);
+            mLocationRequest = LocationRequest.create();
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            mLocationRequest.setInterval(30 * 1000);
+            mLocationRequest.setFastestInterval(5 * 1000);
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-        builder.setAlwaysShow(true);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(mLocationRequest);
+            builder.setAlwaysShow(true);
 
-        //kollar om gps är på
-        result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+            //kollar om gps är på
+            result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
 
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                //final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        //...
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    //final LocationSettingsStates state = result.getLocationSettingsStates();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            // All location settings are satisfied. The client can initialize location
+                            // requests here.
+                            Log.d("tag", "onResult: SUCCESS");
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied. But could be fixed by showing the user
+                            // a dialog.
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                Log.d("tag", "onResult: RESOLUTION_REQUIRED");
+                                status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
 
-                            listCloseFriends.setVisibility(INVISIBLE);
-                            gpsNotOn.setVisibility(VISIBLE);
-
-                            status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        //...
-                    break;
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have no way to fix the
+                            // settings so we won't show the dialog.
+                            Log.d("tag", "onResult: SETTINGS_CHANGE_UNAVAILABLE");
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        //}
     }
 
     /**
@@ -529,6 +541,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     case Activity.RESULT_CANCELED: {
                         // The user was asked to change settings, but chose not to
                         Log.d("tag", "Location not enabled, user cancelled.");
+
+                        listCloseFriends.setVisibility(INVISIBLE);
+                        gpsNotOn.setVisibility(VISIBLE);
                         break;
                     }
                     default: {
@@ -601,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
-        Log.d("tag", "setThisUsersNewLocation:System.currentTimeMillis() " + System.currentTimeMillis()/1000);
+            Log.d("tag", "setThisUsersNewLocation:System.currentTimeMillis() " + System.currentTimeMillis()/1000);
             mDatabase.child("users").child(thisUserID).child("lastUpdateLocation").setValue(System.currentTimeMillis()/1000);
 
 
@@ -660,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             //och om personB är inloggad
                             //läggs personB till i personList.closePersonArrayList
                             if (distanceInM <= thisUser.getChosenDistansInt()
-                                    && checkTimeDistance(personB) <= 60 * 60
+                                    && checkTimeDistance(personB) <= 60 * 10
                                     && distanceInM <= personB.getChosenDistansInt()
                                     && personB.getIfLoggedIn()) {
                                 personB.setDistansBetween(distanceInM);
@@ -817,7 +832,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
                 //om det finns en ny person så ska en notifikation göras
-                if (newFriendNotiArray.size() > 0 || toRmoveFriendNotiArray.size() > 0) {
+                if (newFriendNotiArray.size() > 0 || toRmoveFriendNotiArray.size() > 0 ) {
 
                     sendNotification(newFriendNotiArray);
 
@@ -909,7 +924,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
             //}
 
-            if (numberFriends > 0) {
+            if (numberFriends > 0 && thisUser.notiIsCheckt) {
                 Log.d("tag", "sendNotification: om ändring _____--------->");
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)

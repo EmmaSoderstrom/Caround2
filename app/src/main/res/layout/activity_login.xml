@@ -10,20 +10,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.emmasoderstrom.caround2.Login">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="logOut"
-        android:text="Logga ut"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logga"
-        android:textSize="40sp"
+        android:src="@drawable/logo"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="144dp" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="0dp" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

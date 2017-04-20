@@ -18,13 +18,14 @@
         android:id="@+id/menu_notification"
         android:title="@string/menu_notification"
         android:checkable="true"
+        android:checked="true"
     />
 
-    <item
-        android:id="@+id/menu_busy"
-        android:title="@string/menu_busy"
-        android:checkable="true"
-        />
+    <!--<item-->
+        <!--android:id="@+id/menu_busy"-->
+        <!--android:title="@string/menu_busy"-->
+        <!--android:checkable="true"-->
+        <!--/>-->
 
     <item
         android:id="@+id/menu_sing_out"
