@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.RemoteInput;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -105,7 +106,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     RelativeLayout noFriendClose;
 
 
-
+    ArrayList<Person> lastNotiArray = new ArrayList<>();
+    ArrayList<Person> tempLastNotiArray = new ArrayList<>();
+    ArrayList<Person> newFriendNotiArray = new ArrayList<>();
+    ArrayList<Person> toRmoveFriendNotiArray = new ArrayList<>();
+    ArrayList<Person> oldFriendNotiArray = new ArrayList<>();
 
 
     @Override
@@ -149,6 +154,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         listCloseFriends = (ListView)findViewById(R.id.list_close_friends);
         gpsNotOn = (RelativeLayout)findViewById(R.id.gps_not_on);
 
+    }
+
+    protected void onStart() {
+        Log.d("tag", "Start");
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        Log.d("tag", "Stop");
+        //mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("tag", "onPause");
+        super.onPause();
+        appIsInForegroundMode = false;
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d("tag", "onResume");
+        super.onResume();
+        appIsInForegroundMode = true;
+        oldFriendNotiArray.clear();
     }
 
     public void setThisUser(){
@@ -332,32 +364,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    //Metoder till kartan och gps punkterna
-    protected void onStart() {
-        Log.d("tag", "Start");
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
 
-    protected void onStop() {
-        Log.d("tag", "Stop");
-        //mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d("tag", "onPause");
-        super.onPause();
-        appIsInForegroundMode = false;
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d("tag", "onResume");
-        super.onResume();
-        appIsInForegroundMode = true;
-    }
 
 
     @Override
@@ -736,6 +743,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     /**
      * Lägger till listan med nära vänner till vyn
      */
+
     public void createList() {
         Log.d("tag", "createList");
 
@@ -759,20 +767,72 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             viewNoFriendClose();
 
-        }else{
+            for (Person personB : closePersonList) {
+                lastNotiArray.add(personB);
+            }
+
+        }else {
             Log.d("tag", "createList notifyDataSetChanged");
             adapter.notifyDataSetChanged();
 
             viewNoFriendClose();
 
+            //kollar om lastNotiArray innhåller en person som inte finns i closePersonList
+            // för att då tas bort från notifikationen
+            /*for (Person personB : lastNotiArray) {
+                if (closePersonList.contains(personB)) {
+                } else {
+                    //om lastNotiArray innehåller en perosn som inte finns i closePersonList
+                    //då ska den personen tas bort      ??från notifikationen och lastNotiArray och oldNotiArray??
+                    toRmoveFriendNotiArray.add(personB);
+                }
 
+                //ta bort från oldNotiArray
+                for (Person personBRemove : oldFriendNotiArray) {
+                    toRmoveFriendNotiArray.contains(personBRemove);
+                    oldFriendNotiArray.remove(personBRemove);
+                }
+            }*/
+
+            //Notifikation om appen inte är aktiv
+            if (appIsInForegroundMode == false) {
+
+                //kollar om closePersonList innhåller en person som inte finns i lastNotiArray
+                for (Person personB : closePersonList) {
+                    if (lastNotiArray.contains(personB)) {
+                    } else {
+                        //om den inte innehåller då är det en ny nära vän
+                        newFriendNotiArray.add(personB);
+                    }
+
+                    // temp finns för att göra en ny lastNotiArray utav closePersonList
+                    tempLastNotiArray.add(personB);
+                }
+
+
+
+
+
+                //om det finns en ny person så ska en notifikation göras
+                if (newFriendNotiArray.size() > 0 || toRmoveFriendNotiArray.size() > 0) {
+
+                    sendNotification(newFriendNotiArray);
+
+                    //ränsar ut arrayer
+                    newFriendNotiArray.clear();
+                    lastNotiArray.clear();
+                    toRmoveFriendNotiArray.clear();
+
+
+                    //skapar en ny lastNotiArray
+                    for (Person personB : tempLastNotiArray) {
+                        lastNotiArray.add(personB);
+                    }
+
+                    tempLastNotiArray.clear();
+                }
+            }
         }
-
-        Log.d("tag", "createList: appIsInForegroundMode " + appIsInForegroundMode);
-        //if(appIsInForegroundMode == false) {
-            sendNotification(closePersonList);
-        //}
-
     }
 
     public void viewNoFriendClose(){
@@ -784,9 +844,107 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
 
-    ArrayList<Person> lastNotiArray = new ArrayList<>();
-    public void sendNotification(ArrayList<Person> closePersonList){
-        Log.d("tag", "sendNotification");
+
+    public void sendNotification(ArrayList<Person> newFriendNotiArray){
+
+        if(appIsInForegroundMode == false) {
+
+            String notiTitle = null;
+            String notiText = null;
+
+            //if(newFriendNotiArray.size() > 0){
+            //Title för notifikation
+            String oneFriendClose = getString(R.string.notification_one_friend_close);
+            String multiFriendClose = getString(R.string.notification_multi_friend_close);
+
+            int numberFriends = newFriendNotiArray.size() + oldFriendNotiArray.size();
+
+            /*if (numberFriends == 0) {
+
+                NotificationManager notifManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+                notifManager.cancelAll();
+
+            }*/
+            if (numberFriends == 1) {
+                notiTitle = numberFriends + " " + oneFriendClose;
+            }else if (numberFriends > 1) {
+                notiTitle = numberFriends + " " + multiFriendClose;
+            }
+
+
+            //Andra text för notifikation
+            String allOldName = "";
+            for (Person personB : oldFriendNotiArray) {
+                allOldName = ", " + personB.getFullName() + allOldName;
+            }
+
+            if (newFriendNotiArray.size() == 1) {
+                notiText = newFriendNotiArray.get(0).getFullName() + allOldName;
+            }else if (newFriendNotiArray.size() > 1) {
+                String allNewName = "";
+                for (int i = 0; i < newFriendNotiArray.size(); i++) {
+                    if (newFriendNotiArray.size() - 1 == i) {
+                        allNewName = newFriendNotiArray.get(i).getFullName() + allNewName;
+                    } else {
+                        allNewName = ", " + newFriendNotiArray.get(i).getFullName() + allNewName;
+                    }
+                }
+            }else {
+                notiText = allOldName;
+            }
+            //}
+
+            if (numberFriends > 0) {
+                Log.d("tag", "sendNotification: om ändring _____--------->");
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentTitle(notiTitle)
+                                .setContentText(notiText)
+                                .setAutoCancel(true);
+                // Creates an explicit intent for an Activity in your app
+                Intent resultIntent = new Intent(this, MainActivity.class);
+
+                // The stack builder object will contain an artificial back stack for the
+                // started Activity.
+                // This ensures that navigating backward from the Activity leads out of
+                // your application to the Home screen.
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                // Adds the back stack for the Intent (but not the Intent itself)
+                stackBuilder.addParentStack(MainActivity.class);
+                // Adds the Intent that starts the Activity to the top of the stack
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent =
+                        stackBuilder.getPendingIntent(
+                                0,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+                mBuilder.setContentIntent(resultPendingIntent);
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                // mId allows you to update the notification later on.
+                int myId = 0;
+                mNotificationManager.notify(myId, mBuilder.build());
+            }
+        }
+
+
+        for (Person personB : newFriendNotiArray) {
+            oldFriendNotiArray.add(personB);
+        }
+
+        /*lastNotiArray.clear();
+        for (Person personB : tempLastNotiArray) {
+
+            lastNotiArray.add(personB);
+
+        }*/
+
+
+
+
+
+        /*Log.d("tag", "sendNotification");
         String notiTitle = null;
         String notiText = null;
         boolean ifChanges = false;
@@ -869,7 +1027,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             for (Person personB : closePersonList) {
                 lastNotiArray.add(personB);
             }*/
-        }
+        //}
         /*if(appIsInForegroundMode == true || notiArrayTemp.size() == 0){
             mNotificationManager.cancel(myId);
         }*/
