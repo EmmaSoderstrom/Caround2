@@ -777,25 +777,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             viewNoFriendClose();
 
-            //kollar om lastNotiArray innhåller en person som inte finns i closePersonList
-            // för att då tas bort från notifikationen
-            /*for (Person personB : lastNotiArray) {
-                if (closePersonList.contains(personB)) {
-                } else {
-                    //om lastNotiArray innehåller en perosn som inte finns i closePersonList
-                    //då ska den personen tas bort      ??från notifikationen och lastNotiArray och oldNotiArray??
-                    toRmoveFriendNotiArray.add(personB);
-                }
 
-                //ta bort från oldNotiArray
-                for (Person personBRemove : oldFriendNotiArray) {
-                    toRmoveFriendNotiArray.contains(personBRemove);
-                    oldFriendNotiArray.remove(personBRemove);
-                }
-            }*/
 
             //Notifikation om appen inte är aktiv
             if (appIsInForegroundMode == false) {
+
+                //kollar om lastNotiArray innhåller en person som inte finns i closePersonList
+                // för att då tas bort från notifikationen
+                for (Person personB : lastNotiArray) {
+                    if (closePersonList.contains(personB)) {
+                    } else {
+                        //om lastNotiArray innehåller en perosn som inte finns i closePersonList
+                        //då ska den personen tas bort      ??från notifikationen och lastNotiArray och oldNotiArray??
+                        toRmoveFriendNotiArray.add(personB);
+                        Log.d("tag", "createList: toRmoveFriendNotiArray " + toRmoveFriendNotiArray);
+                    }
+
+                    //ta bort från oldNotiArray
+                    for (Person personBRemove : toRmoveFriendNotiArray) {
+                        oldFriendNotiArray.remove(personBRemove);
+                        Log.d("tag", "createList: toRmoveFriendNotiArray " + toRmoveFriendNotiArray);
+                    }
+                }
 
                 //kollar om closePersonList innhåller en person som inte finns i lastNotiArray
                 for (Person personB : closePersonList) {
@@ -859,12 +862,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             int numberFriends = newFriendNotiArray.size() + oldFriendNotiArray.size();
 
-            /*if (numberFriends == 0) {
+            if (numberFriends == 0) {
 
                 NotificationManager notifManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
                 notifManager.cancelAll();
 
-            }*/
+            }
             if (numberFriends == 1) {
                 notiTitle = numberFriends + " " + oneFriendClose;
             }else if (numberFriends > 1) {
@@ -874,8 +877,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             //Andra text för notifikation
             String allOldName = "";
-            for (Person personB : oldFriendNotiArray) {
-                allOldName = ", " + personB.getFullName() + allOldName;
+            for (int i = 0; i < oldFriendNotiArray.size(); i++) {
+                Person personB = oldFriendNotiArray.get(i);
+
+                if(newFriendNotiArray.size() == 0){
+                    if(oldFriendNotiArray.size() - 1 == i){
+                        allOldName = personB.getFullName() + allOldName;
+                    }else{
+                        allOldName = ", " + personB.getFullName() + allOldName;
+                    }
+
+                }else{
+                    allOldName = ", " + personB.getFullName() + allOldName;
+                }
+
             }
 
             if (newFriendNotiArray.size() == 1) {
