@@ -928,7 +928,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d("tag", "sendNotification: om ändring _____--------->");
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
-                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setSmallIcon(R.mipmap.icon2)
                                 .setContentTitle(notiTitle)
                                 .setContentText(notiText)
                                 .setAutoCancel(true);

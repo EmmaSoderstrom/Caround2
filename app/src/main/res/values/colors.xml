@@ -4,9 +4,14 @@
     <!--indigo800-->
     <!--<color name="colorPrimary">#283593</color>-->
     <color name="colorBackgrund">#ffffff</color>
-    <color name="colorPrimary">#673ab7</color>
-    <color name="colorPrimaryDark">#512da8</color>
 
+    <!--<color name="colorPrimary">#673ab7</color>-->
+    <!--<color name="colorPrimaryDark">#512da8</color>-->
+    <color name="colorPrimary">#531c5d</color>
+    <color name="colorPrimaryDark">#280033</color>
+    <!--<color name="colorPrimary">#683366</color>-->
+    <!--<color name="colorPrimaryDark">#3c073b</color>-->
+    <color name="colorPrimaryLight">#7f52a4</color>
     <color name="colorAccent">#ffb74d</color>
 
 
