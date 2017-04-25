@@ -595,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         AlertDialog alert = builder.create();
         alert.show();
     }
-    
+
 
 
 
