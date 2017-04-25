@@ -3,23 +3,20 @@ package com.emmasoderstrom.caround2;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
- * Created by User on 2017-04-20.
+ * Created by User on 2017-04-25.
  */
 
-public class MyGpsRec extends BroadcastReceiver {
+public class MyInternetRec extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent){
 
         if(MainActivity.getInstace() != null){
-            MainActivity.getInstace().checkGPSOn();
+            Log.d("tag", "onReceive: MyInternetRec");
+            //MainActivity.getInstace().noInternetRec();
         }
     }
 }

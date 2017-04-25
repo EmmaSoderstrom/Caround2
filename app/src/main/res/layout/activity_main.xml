@@ -54,9 +54,6 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:id="@+id/no_friend_close"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_below="@id/toolbar">
 
         <ImageView
@@ -110,9 +107,6 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:id="@+id/permission_not_granted"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_below="@id/toolbar">
 
         <ImageView
@@ -166,9 +160,6 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
         android:id="@+id/gps_not_on"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_below="@id/toolbar">
 
         <ImageView
@@ -217,7 +208,53 @@ tools:context="com.emmasoderstrom.caround2.MainActivity">
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/internet_not_on"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
+        <ImageView
+            android:id="@+id/internet_image"
+            android:src="@drawable/ic_wifi_black_100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/internet_turn_on_text"/>
+
+        <TextView
+            android:id="@+id/internet_turn_on_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/dialog_no_internet_text1"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:id="@+id/internet_turn_on_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/dialog_no_internet_text2"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_below="@+id/internet_turn_on_text"/>
+
+
+
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="16dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:src="@drawable/ic_place_white_24dp"-->
+            <!--android:onClick="onClickGpsTurnOn"/>-->
+
+    </RelativeLayout>
 
 <!--
 <Button

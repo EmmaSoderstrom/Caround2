@@ -192,7 +192,7 @@ public class DialogAddFriend{
                 });
 
 
-        builder1.setNeutralButton("Rensa val", new DialogInterface.OnClickListener() {
+        /*builder1.setNeutralButton("Rensa val", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("tag", "Rensa val");
@@ -203,7 +203,7 @@ public class DialogAddFriend{
                 }
 
             }
-        });
+        });*/
 
 
         AlertDialog alertAddFriends = builder1.create();

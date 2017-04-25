@@ -3,12 +3,17 @@ package com.emmasoderstrom.caround2;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -111,38 +116,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         ifFirstLogout = true;
 
 
-//        // kolla om användaen har konto och är inloggad
-//
-///*        thisPersonPhoneId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-//        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                Log.d("tag", "Login händer detta");
-//                for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
-//                    Person user = snap.getValue(Person.class);
-//                    String userId = user.getPersonId();
-//
-//                    if(userId.equals(thisPersonPhoneId)){
-//
-//                        if(user.getSignedIn()) {
-//                            goToMain(getWindow().getDecorView().getRootView());
-//                            break;
-//                        }else{
-//                            Button loginButton = (Button)findViewById(R.id.login);
-//                            Button creatButton = (Button)findViewById(R.id.creat);
-//                            loginButton.setVisibility(View.VISIBLE);
-//                            creatButton.setVisibility(View.INVISIBLE);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });*/
 
     }
 
@@ -155,8 +128,19 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     private void signIn(){
         Log.d("tag", "signIn");
         //mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue();
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        //Log.d("tag", "signIn: checkInternetOn "  + checkInternetOn());
+
+        if(checkInternetOn()) {
+            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }else{
+            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
+            noInternet();
+
+        }
+
     }
 
     public void logOut(){
@@ -170,42 +154,42 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         }
     }
 
-    public void logOut(View view){
-        Log.d("tag", "sendNotification: om ändring _____--------->");
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        //.setContentTitle(notiTitle)
-                        //.setContentText(notiText)
-                        .setContentTitle("hej")
-                        .setContentText("test")
-                        .setAutoCancel(true)
-                //.setOngoing(false)
-                ;
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, Login.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(Login.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        int myId = 0;
-        mNotificationManager.notify(myId, mBuilder.build());
-    }
+//    public void logOut(View view){
+//        Log.d("tag", "sendNotification: om ändring _____--------->");
+//        NotificationCompat.Builder mBuilder =
+//                new NotificationCompat.Builder(this)
+//                        .setSmallIcon(R.mipmap.ic_launcher)
+//                        //.setContentTitle(notiTitle)
+//                        //.setContentText(notiText)
+//                        .setContentTitle("hej")
+//                        .setContentText("test")
+//                        .setAutoCancel(true)
+//                //.setOngoing(false)
+//                ;
+//        // Creates an explicit intent for an Activity in your app
+//        Intent resultIntent = new Intent(this, Login.class);
+//
+//        // The stack builder object will contain an artificial back stack for the
+//        // started Activity.
+//        // This ensures that navigating backward from the Activity leads out of
+//        // your application to the Home screen.
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//        // Adds the back stack for the Intent (but not the Intent itself)
+//        stackBuilder.addParentStack(Login.class);
+//        // Adds the Intent that starts the Activity to the top of the stack
+//        stackBuilder.addNextIntent(resultIntent);
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(
+//                        0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//        mBuilder.setContentIntent(resultPendingIntent);
+//        NotificationManager mNotificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        // mId allows you to update the notification later on.
+//        int myId = 0;
+//        mNotificationManager.notify(myId, mBuilder.build());
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -293,6 +277,40 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                 .replace("]", "%5%");
 
         return emailValid;
+    }
+
+    public boolean checkInternetOn(){
+
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    protected void noInternet() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_no_internet)
+                //.setTitle("Ingeintenet hittat!")
+                .setCancelable(false)
+                /*.setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                startActivity(i);
+                            }
+                        }
+                )*/
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        }
+                );
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

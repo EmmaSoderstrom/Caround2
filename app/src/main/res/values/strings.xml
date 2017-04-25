@@ -18,6 +18,13 @@
     <string name="login_button_info">Information</string>
 
     <!--
+    Inget internet
+    -->
+    <string name="dialog_no_internet">Ett nätverksfel inträffade. Vänligen kontrollera anslutningen och försök igen.</string>
+    <string name="dialog_no_internet_text1">Ett nätverksfel inträffade!</string>
+    <string name="dialog_no_internet_text2">Vänligen kontrollera anslutningen och försök igen.</string>
+
+    <!--
     Skapa konto sida
     -->
     <string name="creat_user_firstname">Namn</string>

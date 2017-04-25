@@ -2,11 +2,13 @@ package com.emmasoderstrom.caround2;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,6 @@ public class DialogChangeDistansOneWheel {
 
         mainActivity = startMainActivity;
         thisUser = startThisUser;
-        //oldChosenDistansText = startOldChosenDistansText;
     }
 
     public void showDialogChangeDistans(Context context, int startOldChosenDistans) {
@@ -83,7 +84,14 @@ public class DialogChangeDistansOneWheel {
         host.addTab(spec);
 
 
+        setTabColor();
 
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                setTabColor();
+            }
+        });
 
 
 
@@ -250,6 +258,17 @@ public class DialogChangeDistansOneWheel {
 
         AlertDialog alertChoseDistans = builder1.create();
         alertChoseDistans.show();
+    }
+
+    public void setTabColor(){
+        for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
+            TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title); //Unselected Tabs
+            tv.setTextColor(Color.parseColor("#89000000"));
+        }
+
+        TextView tv = (TextView) host.getCurrentTabView().findViewById(android.R.id.title); //for Selected Tab
+        tv.setTextColor(Color.parseColor("#ffb74d"));
+
     }
 
 

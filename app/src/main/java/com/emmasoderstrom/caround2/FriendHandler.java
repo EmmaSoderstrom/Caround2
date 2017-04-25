@@ -1,7 +1,9 @@
 package com.emmasoderstrom.caround2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +18,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,6 +74,12 @@ public class FriendHandler extends AppCompatActivity {
         host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
 
+        //TabWidget tab = (TabWidget)findViewById(R.id.tabs);
+        //TextView tv = (TextView) host.getTabWidget().findViewById(android.R.id.tabs);
+        //tv.setTextColor(Color.parseColor("#000000"));
+        //TabHost tabhost = getTabHost();
+
+
         //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Tab One");
         spec.setContent(R.id.tab_friend_allowed);
@@ -83,6 +93,16 @@ public class FriendHandler extends AppCompatActivity {
         spec.setIndicator(getString(R.string.friend_tab_friReq));
         host.addTab(spec);
 
+
+
+        setTabColor();
+
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                setTabColor();
+            }
+        });
 
 
 
@@ -129,50 +149,19 @@ public class FriendHandler extends AppCompatActivity {
 
             }
         });
-
-        /*mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                thisUser = dataSnapshot.child("users")
-                        .child(thisUserID)
-                        .getValue(Person.class);
-
-
-                //Skapar en list med personer utav thisUsers friendRequestsId
-                for (String personBId : thisUser.getFriendRequestsId()) {
-                    Log.d("tag", "personBId " + personBId);
-                    Person personB = dataSnapshot.child("users")
-                            .child(personBId)
-                            .getValue(Person.class);
-
-
-                    friendRequestsPersonList.add(personB);
-
-                }
-
-                //Skapar en list med personer utav thisUsers friendAllowed
-                for (String personBId : thisUser.getFriendAllowed()) {
-                    Person personB = dataSnapshot.child("users")
-                            .child(personBId)
-                            .getValue(Person.class);
-
-                    friendAllowedPersonList.add(personB);
-                }
-
-
-                setRequestFriendList();
-                setAllowedFriendList();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
     }
 
 
+    public void setTabColor(){
+        for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
+            TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title); //Unselected Tabs
+            tv.setTextColor(Color.parseColor("#ffffff"));
+        }
+
+        TextView tv = (TextView) host.getCurrentTabView().findViewById(android.R.id.title); //for Selected Tab
+        tv.setTextColor(Color.parseColor("#ffb74d"));
+
+    }
 
 
 
@@ -268,39 +257,50 @@ public class FriendHandler extends AppCompatActivity {
     public void onClickListCheckbox(View view){
         Log.d("tag", "onClickListCheckbox: ");
 
-        //view är checkboxen
-        CheckBox checkBox = (CheckBox)view;
-        RelativeLayout relLayout = (RelativeLayout)view.getParent();
-        //textview (personIdFromView) med id är invisible och finns bara för att lagra id så man kan nå det via view
-        TextView personIdFromView = (TextView)relLayout.findViewById(R.id.list_id);
-        String viewPersonId = (String)personIdFromView.getText();
+        if(MainActivity.checkInternetOn(this)) {
+            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
+
+            //view är checkboxen
+            CheckBox checkBox = (CheckBox)view;
+            RelativeLayout relLayout = (RelativeLayout)view.getParent();
+            //textview (personIdFromView) med id är invisible och finns bara för att lagra id så man kan nå det via view
+            TextView personIdFromView = (TextView)relLayout.findViewById(R.id.list_id);
+            String viewPersonId = (String)personIdFromView.getText();
 
 
-        if(checkBox.isChecked()){
-            for (int i = 0; i < friendRequestsPersonList.size(); i++) {
-                if(friendRequestsPersonList.get(i).getPersonId().equals(viewPersonId)){
+            if(checkBox.isChecked()){
+                for (int i = 0; i < friendRequestsPersonList.size(); i++) {
+                    if(friendRequestsPersonList.get(i).getPersonId().equals(viewPersonId)){
 
-                    //ändrar reqest till allowed
-                    addToAllowedLists(i);
+                        //ändrar reqest till allowed
+                        addToAllowedLists(i);
 
-                    //ta bort från arraylistan som är koplad till list adaptern
-                    friendAllowedPersonList.add(friendRequestsPersonList.get(i));
-                    friendRequestsPersonList.remove(i);
+                        //ta bort från arraylistan som är koplad till list adaptern
+                        friendAllowedPersonList.add(friendRequestsPersonList.get(i));
+                        friendRequestsPersonList.remove(i);
 
-                    //ny requestArray till databasen, med de personId som blir kvar.
-                    ArrayList<String> tempNyReqList = new ArrayList<String>();
-                    for (Person personReq : friendRequestsPersonList) {
-                        String personId = personReq.getPersonId();
-                        tempNyReqList.add(personId);
+                        //ny requestArray till databasen, med de personId som blir kvar.
+                        ArrayList<String> tempNyReqList = new ArrayList<String>();
+                        for (Person personReq : friendRequestsPersonList) {
+                            String personId = personReq.getPersonId();
+                            tempNyReqList.add(personId);
+                        }
+                        mDatabase.child("users").child(thisUserID).child("friendRequestsId").setValue(tempNyReqList);
+
+                        setRequestFriendList();
+                        setAllowedFriendList();
+
+                        break;
                     }
-                    mDatabase.child("users").child(thisUserID).child("friendRequestsId").setValue(tempNyReqList);
-
-                    setRequestFriendList();
-                    //setAllowedFriendList();
-
-                    break;
                 }
             }
+
+        }else{
+            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
+            CheckBox checkBox = (CheckBox)view;
+            checkBox.setChecked(false);
+            MainActivity.noInternet(this);
+
         }
     }
 
@@ -330,38 +330,48 @@ public class FriendHandler extends AppCompatActivity {
      */
     public void addFriendRequest(View view){
         Log.d("tag", "addFriendRequest: finnspermission?");
-        //kollar permission för kontakaten
 
-        // Assume thisActivity is the current activity
+        if(MainActivity.checkInternetOn(this)) {
+            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
+
+
+            //kollar permission för kontakaten
+
+            // Assume thisActivity is the current activity
         /*int permissionCheck = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.READ_CONTACTS);*/
 
-        //Kollar permission att använda kontakter
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
+            //Kollar permission att använda kontakter
+            if (ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.READ_CONTACTS)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        android.Manifest.permission.READ_CONTACTS)) {
 
-                Log.d("tag", "checkSelfPermission: finns inte permission för contakter");
+                    Log.d("tag", "checkSelfPermission: finns inte permission för contakter");
 
-                //fråga om premission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.READ_CONTACTS},
-                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                    //fråga om premission
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
-            } else {
+                } else {
 
-                Log.d("tag", "checkSelfPermission: 1else");
+                    Log.d("tag", "checkSelfPermission: 1else");
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            }else{
+                Log.d("tag", "addFriendRequest: ");
+                dialogAddFriend.showDialogAddFriend(this);
             }
         }else{
-            Log.d("tag", "addFriendRequest: ");
-            dialogAddFriend.showDialogAddFriend(this);
+            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
+            MainActivity.noInternet(this);
+
         }
     }
 

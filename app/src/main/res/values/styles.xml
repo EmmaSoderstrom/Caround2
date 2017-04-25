@@ -23,7 +23,8 @@
 
     <style name="TabWidgetThemeBlack" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorPrimary">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textColorSecondary">#bc0000</item>
+        <!--<item name="android:textColorSecondary">@color/textColorSecondary</item>-->
     </style>
 
     <style name="TabWidgetThemeWhite" parent="ThemeOverlay.AppCompat.Light">

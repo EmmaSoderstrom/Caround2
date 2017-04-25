@@ -80,28 +80,4 @@
     </TabHost>
 
 
-
-<!--
-    <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_marginRight="16dp"
-    android:layout_marginLeft="16dp">
-
-    <NumberPicker
-        android:id="@+id/wheel_number_distans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginRight="16dp">
-    </NumberPicker>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="m"/>
-</LinearLayout>
--->
-
-
 </LinearLayout>

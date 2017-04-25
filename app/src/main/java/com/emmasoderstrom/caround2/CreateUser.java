@@ -1,11 +1,17 @@
 package com.emmasoderstrom.caround2;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -18,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +51,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    //public static String thisUserID;
+    //public static SharedPreferences sharedPreferences;
+
     String thisUserID;
     Person thisUser;
     String userPicS;
@@ -63,9 +73,13 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
-        thisUserID = message;
+        //Intent intent = getIntent();
+        //String message = intent.getStringExtra(Login.EXTRA_MESSAGE);
+        //thisUserID = message;
+
+        thisUserID = Login.thisUserID;
+
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -114,7 +128,12 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                     Person user = snap.getValue(Person.class);
                     String userId = user.getPersonId();
 
-                    if(userId.equals(thisUserID)){
+                    Log.d("tag", "onDataChange: userId " + userId + " thisUserID " + thisUserID);
+
+                    if(userId != null && userId.equals(thisUserID)
+                            && user.getFirstName() != null
+                            && user.getLastName() != null
+                            && user.getPhoneNumber() != null){
                         firstName.setText(user.getFirstName());
                         lastName.setText(user.getLastName());
                         telNumber.setText(user.getPhoneNumber());
@@ -143,42 +162,51 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
     }
 
     public void creatUserDone(View view) {
-        Log.d("tag", "firstName " + firstName.getText());
+        Log.d("tag", "creatUserDone ");
 
-        if (!firstName.getText().toString().isEmpty()
-                && !lastName.getText().toString().isEmpty()
-                && !telNumber.getText().toString().isEmpty()){
+        if(checkInternetOn()) {
+            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
 
-            //om använder profil inte finns
-            if(thisUser == null) {
-                //Skapa och lagra denna nya användare i databasen
+            if (!firstName.getText().toString().isEmpty()
+                    && !lastName.getText().toString().isEmpty()
+                    && !telNumber.getText().toString().isEmpty()){
 
-                //conventerar bil UIR till sträng så databasen kan ta imot den
-                //String picString = userPic.toString();
+                //om använder profil inte finns
+                if(thisUser == null) {
+                    //Skapa och lagra denna nya användare i databasen
 
-                Person personA = new Person(userPicS, thisUserID,
-                        firstName.getText().toString(), lastName.getText().toString(),
-                        spinnerCountry.getSelectedItem().toString(), telNumber.getText().toString(), 6000,
-                        null, null, null);
+                    //conventerar bil UIR till sträng så databasen kan ta imot den
+                    //String picString = userPic.toString();
 
-                mDatabase.child("users").child(thisUserID).setValue(personA);
+                    Person personA = new Person(userPicS, thisUserID,
+                            firstName.getText().toString(), lastName.getText().toString(),
+                            spinnerCountry.getSelectedItem().toString(), telNumber.getText().toString(), 6000,
+                            null, null, null);
+
+                    mDatabase.child("users").child(thisUserID).setValue(personA);
+
+                }
+                //om användar profil redan finns
+                else{
+                    mDatabase.child("users").child(thisUserID).child("picString").setValue(userPicS);
+                    mDatabase.child("users").child(thisUserID).child("firstName").setValue(firstName.getText().toString());
+                    mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
+                    mDatabase.child("users").child(thisUserID).child("fullName").setValue(firstName.getText().toString() + lastName.getText().toString());
+                    mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());
+                    mDatabase.child("users").child(thisUserID).child("ifLoggedIn").setValue(true);
+                    mDatabase.child("users").child(thisUserID).child("notiIsCheckt").setValue(true);
+
+                }
+
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra(EXTRA_MESSAGE, thisUserID);
+                startActivity(intent);
 
             }
-            //om användar profil redan finns
-            else{
-                mDatabase.child("users").child(thisUserID).child("picString").setValue(userPicS);
-                mDatabase.child("users").child(thisUserID).child("firstName").setValue(firstName.getText().toString());
-                mDatabase.child("users").child(thisUserID).child("lastName").setValue(lastName.getText().toString());
-                mDatabase.child("users").child(thisUserID).child("fullName").setValue(firstName.getText().toString() + lastName.getText().toString());
-                mDatabase.child("users").child(thisUserID).child("phoneNumber").setValue(telNumber.getText().toString());
-                mDatabase.child("users").child(thisUserID).child("ifLoggedIn").setValue(true);
 
-            }
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, thisUserID);
-            startActivity(intent);
-
+        }else{
+            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
+            noInternet();
         }
     }
 
@@ -245,5 +273,31 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 break;
             }
         }
+    }
+
+    public boolean checkInternetOn(){
+
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    protected void noInternet() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Ett nätverksfel inträffade. Vänligen kontrollera anslutningen och försök igen.")
+                //.setTitle("Ingeintenet hittat!")
+                .setCancelable(false)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        }
+                );
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

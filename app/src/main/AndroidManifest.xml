@@ -3,8 +3,12 @@
     package="com.emmasoderstrom.caround2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -40,7 +44,13 @@
         <receiver android:name=".MyGpsRec">
             <intent-filter>
                 <action android:name="android.location.PROVIDERS_CHANGED" />
+            </intent-filter>
+        </receiver>
 
+        <receiver android:name=".MyInternetRec">
+            <intent-filter>
+                <!--<action android:name="android.net.wifi.STATE_CHANGE" />-->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />.
             </intent-filter>
         </receiver>
 
