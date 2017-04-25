@@ -115,8 +115,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         //bolian för att logga ut användaren om de är inloggade när de kommer till sidan.
         ifFirstLogout = true;
 
-
-
     }
 
     @Override
@@ -127,20 +125,13 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
 
     private void signIn(){
         Log.d("tag", "signIn");
-        //mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue();
-
-        //Log.d("tag", "signIn: checkInternetOn "  + checkInternetOn());
 
         if(checkInternetOn()) {
-            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
         }else{
-            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
             noInternet();
-
         }
-
     }
 
     public void logOut(){
@@ -153,43 +144,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         }
     }
-
-//    public void logOut(View view){
-//        Log.d("tag", "sendNotification: om ändring _____--------->");
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        //.setContentTitle(notiTitle)
-//                        //.setContentText(notiText)
-//                        .setContentTitle("hej")
-//                        .setContentText("test")
-//                        .setAutoCancel(true)
-//                //.setOngoing(false)
-//                ;
-//        // Creates an explicit intent for an Activity in your app
-//        Intent resultIntent = new Intent(this, Login.class);
-//
-//        // The stack builder object will contain an artificial back stack for the
-//        // started Activity.
-//        // This ensures that navigating backward from the Activity leads out of
-//        // your application to the Home screen.
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//        // Adds the back stack for the Intent (but not the Intent itself)
-//        stackBuilder.addParentStack(Login.class);
-//        // Adds the Intent that starts the Activity to the top of the stack
-//        stackBuilder.addNextIntent(resultIntent);
-//        PendingIntent resultPendingIntent =
-//                stackBuilder.getPendingIntent(
-//                        0,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//        mBuilder.setContentIntent(resultPendingIntent);
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        // mId allows you to update the notification later on.
-//        int myId = 0;
-//        mNotificationManager.notify(myId, mBuilder.build());
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

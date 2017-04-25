@@ -582,7 +582,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static void noInternet(Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Ett nätverksfel inträffade. Vänligen kontrollera anslutningen och försök igen.")
+        builder.setMessage(R.string.dialog_no_internet)
                 //.setTitle("Ingeintenet hittat!")
                 .setCancelable(false)
                 .setPositiveButton("Ok",
@@ -595,22 +595,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         AlertDialog alert = builder.create();
         alert.show();
     }
-
-    public void noInternetRec() {
-
-        if(checkInternetOn(this)) {
-            Log.d("tag", "signIn: internett      true-------zzzzzzz--------->");
-            listCloseFriends.setVisibility(VISIBLE);
-            internetNotOnView.setVisibility(INVISIBLE);
-        }else{
-            Log.d("tag", "signIn: internett      false-------zzzzzzz--------->");
-            listCloseFriends.setVisibility(INVISIBLE);
-            internetNotOnView.setVisibility(VISIBLE);
-            numberOfFriendsText.setText(0 + " " + panelNumberOfFriends);
-
-
-        }
-    }
+    
 
 
 

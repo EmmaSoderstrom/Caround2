@@ -287,7 +287,7 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
     protected void noInternet() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Ett nätverksfel inträffade. Vänligen kontrollera anslutningen och försök igen.")
+        builder.setMessage(R.string.dialog_no_internet)
                 //.setTitle("Ingeintenet hittat!")
                 .setCancelable(false)
                 .setPositiveButton("Ok",

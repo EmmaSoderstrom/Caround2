@@ -7,22 +7,12 @@
     android:orientation="horizontal">
 
 
-
-    <!--<ImageView-->
-        <!--android:id="@+id/list_pic"-->
-        <!--android:layout_width="40dp"-->
-        <!--android:layout_height="40dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:src="@drawable/ic_account_circle_color_24dp"/>-->
-
     <android.support.v7.widget.CardView
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:elevation="12dp"
-        android:id="@+id/view2"
         app:cardCornerRadius="20dp"
         android:innerRadius="0dp"
         android:shape="ring"
