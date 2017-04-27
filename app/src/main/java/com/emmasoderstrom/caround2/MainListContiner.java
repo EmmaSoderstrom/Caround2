@@ -31,16 +31,10 @@ import static android.support.v7.widget.RecyclerView.*;
 public class MainListContiner extends ArrayAdapter<Person> {
 
     private final Context context;
-
-    //private final Integer[] pic;
-    //private final String name;
-    //private final String distance;
-    //private final Person[] person;
     private ArrayList<Person> person;
 
-    ViewHolder holder;
+    //ViewHolder holder;
     ImageView imagePicView;
-
 
 
     public MainListContiner(Context context, ArrayList<Person> startPerson) {
@@ -81,6 +75,7 @@ public class MainListContiner extends ArrayAdapter<Person> {
 
         imagePicView = (ImageView) rowView.findViewById(R.id.list_pic);
         TextView textNameView = (TextView) rowView.findViewById(R.id.list_name);
+        TextView textTimwView = (TextView) rowView.findViewById(R.id.list_time);
         TextView textDistansView = (TextView) rowView.findViewById(R.id.list_distans);
 
         //bild
@@ -97,6 +92,9 @@ public class MainListContiner extends ArrayAdapter<Person> {
 
         //text för och efternamn
         textNameView.setText(person.get(position).getFullName());
+        //text tid
+        String panelTime = context.getString(R.string.panel_time);
+        textTimwView.setText(checkTimeDistance(person.get(position)) + " " + panelTime);
 
         //text distans
         int thisUserDistans = person.get(position).getDistansBetween();
@@ -155,7 +153,10 @@ public class MainListContiner extends ArrayAdapter<Person> {
         }
     }
 
-
-
-
+    public String checkTimeDistance(Person personB){
+        double timeDistanceSek = (System.currentTimeMillis() / 1000) - (personB.getLastUpdateLocation() / 1000) ;
+        int timeDistanceMin = (int) (timeDistanceSek / 60);
+        String timeDistanceString = String.valueOf(timeDistanceMin);
+        return timeDistanceString;
+    }
 }

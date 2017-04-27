@@ -43,15 +43,15 @@
         />
 
 
-    <ImageButton
-        android:id="@+id/list_image_edit"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_mode_edit_black_24dp"
-        android:background="@null"
-        android:onClick="onClickListImageEdit"/>
+    <!--<ImageButton-->
+        <!--android:id="@+id/list_image_edit"-->
+        <!--android:layout_width="48dp"-->
+        <!--android:layout_height="48dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:src="@drawable/ic_mode_edit_black_24dp"-->
+        <!--android:background="@null"-->
+        <!--android:onClick="onClickListImageEdit"/>-->
 
 </RelativeLayout>
 

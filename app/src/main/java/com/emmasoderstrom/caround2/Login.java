@@ -178,25 +178,25 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     }
 
     public void checkIfToCreatuser(){
+        Log.d("tag", "checkIfToCreatuser");
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.d("tag", "Lkollar match med databas");
+                boolean ifUserHaveAccount = false;
                 for (DataSnapshot snap: dataSnapshot.child("users").getChildren()) {
                     Person user = snap.getValue(Person.class);
                     String userId = user.getPersonId();
 
-                    if(userId.equals(userUID)){
-                        //goToMain();
-                        Log.d("tag", "onDataChange: händer dettta ------------>>>>>");
-                        //mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue(true);
-                        goToCreat();
-                        break;
-                    }else {
-                        goToCreat();
+                    if(userId.equals(emailReplaceInvaid(userEmail))){
+                        ifUserHaveAccount = true;
                         break;
                     }
+                }
+                if(ifUserHaveAccount){
+                    goToMain();
+                }else{
+                    goToCreat();
                 }
             }
 
@@ -218,6 +218,19 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
         thisUserID = emailValid;
 
+        startActivity(intent);
+    }
+
+    public void goToMain(){
+        Intent intent = new Intent(this, MainActivity.class);
+        String emailValid = emailReplaceInvaid(userEmail);
+        intent.putExtra(EXTRA_MESSAGE, emailValid);
+
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        thisUserID = sharedPreferences.getString(USER_ID_KEY, null);
+        thisUserID = emailValid;
+        mDatabase.child("users").child(emailReplaceInvaid(userEmail)).child("ifLoggedIn").setValue(true);
 
         startActivity(intent);
     }
@@ -246,16 +259,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_no_internet)
-                //.setTitle("Ingeintenet hittat!")
                 .setCancelable(false)
-                /*.setPositiveButton("Settings",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                                startActivity(i);
-                            }
-                        }
-                )*/
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {

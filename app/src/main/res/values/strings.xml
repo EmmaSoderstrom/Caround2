@@ -41,6 +41,8 @@
     <string name="panel_distans_m">m</string>
     <string name="panel_distans_km">km</string>
     <string name="panel_distans_mil">mil</string>
+    <string name="panel_time">minuter sedan</string>
+
 
 
     <string name="button_busy">Upptagen</string>

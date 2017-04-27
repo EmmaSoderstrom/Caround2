@@ -72,21 +72,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static MainActivity insMain;
 
     public static final String EXTRA_MESSAGE = "com.emmasoderstrom.caround2.MESSAGE";
-
     public static final String MyPREFERENCES = "com.emmasoderstrom.caround2.saveid.MyPREFERENCES";
     public static final String USER_ID_KEY = "userIdKey";
     public static String thisUserID;
     public static SharedPreferences sharedPreferences;
-
-    Intent intent;
-    private DatabaseReference mDatabase;
-    Person thisUser;
-
-    Toolbar toolbar;
-    DialogChangeDistansOneWheel dialogChangeDistans;
-    DialogViewListFriend dialogViewListFriend;
-
-    boolean appIsInForegroundMode;
 
     int REQUEST_CHECK_SETTINGS = 100;
     final static int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
@@ -95,27 +84,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
+    Intent intent;
+    private DatabaseReference mDatabase;
 
+    Person thisUser;
+
+    Toolbar toolbar;
     TextView numberOfFriendsText;
-    String panelNumberOfFriends;
-    String numberOfFriensString;
-    int chosenDistansInt;
     TextView chosenDistansText;
+    int chosenDistansInt;
+
+    String numberOfFriensString;
+    String panelNumberOfFriends;
     String panelDistansM;
     String panelDistansKm;
     String panelDistansMil;
 
-    PersonList personList;
-    ArrayList<Person> closePersonList = new ArrayList<Person>();
+    DialogChangeDistansOneWheel dialogChangeDistans;
+    DialogViewListFriend dialogViewListFriend;
+
+    boolean appIsInForegroundMode;
+    int maxTimeDistansLastLocation = 3600;   //60min
+
     MainListContiner adapter;
     ListView listView = null;
-
     ListView listCloseFriends;
+
     RelativeLayout gpsPermissionRView;
     RelativeLayout gpsNotOnView;
     RelativeLayout noFriendCloseView;
     RelativeLayout internetNotOnView;
 
+    //PersonList personList;
+    ArrayList<Person> closePersonList = new ArrayList<Person>();
 
     ArrayList<Person> lastNotiArray = new ArrayList<>();
     ArrayList<Person> tempLastNotiArray = new ArrayList<>();
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         setThisUser();
 
-        personList = new PersonList(this, 0);
+        //personList = new PersonList(this, 0);
 
         noFriendCloseView = (RelativeLayout) findViewById(R.id.no_friend_close);
         listCloseFriends = (ListView) findViewById(R.id.list_close_friends);
@@ -248,26 +249,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
     }
-
-    /**
-     * Skapar personer och skapar en arraylist med alla vänner
-     */
-//    public void creatFakeUser(){
-//        Log.d("tag", "creatFakeUser ");
-//
-//        writeNewUser("id1", "Jonas2", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
-//        writeNewUser("id2", "Ulla", "Söderström", "0707324181", 10500, true, 59.35460399999999, 18.282052499999963);
-//        writeNewUser("id3", "Patrik", "Slussen", "0739168234", 1000, true, 59.31951240000001, 18.07214060000001);
-//        writeNewUser("id4", "Karolinska", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
-//        writeNewUser("id5", "Emma", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
-//        writeNewUser("id6", "JonasNot", "Amnesten", "12345", 10000, true, 59.31803730000001, 18.38822559999994);
-//        writeNewUser("id7", "UllaNot", "Södersröm", "12345", 10500, true, 59.35460399999999, 18.282052499999963);
-//        writeNewUser("id8", "SlussenNot", "Slussen", "12345", 1000, true, 59.31951240000001, 18.07214060000001);
-//        writeNewUser("id9", "KarolinskaNot", "Instutet", "12345", 2000, true, 59.34814839999999, 18.023657800000024);
-//        writeNewUser("id10", "EmmaNot", "Söderström", "12345", 1550, true, 59.31803730000001, 18.38822559999994);
-//
-//    }
-//
 
 
     /**
@@ -660,8 +641,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mDatabase.child("users").child(thisUserID).child("locationLatitude").setValue(location.getLatitude());
             mDatabase.child("users").child(thisUserID).child("locationLongitude").setValue(location.getLongitude());
 
-            Log.d("tag", "setThisUsersNewLocation:System.currentTimeMillis() " + System.currentTimeMillis()/1000);
-            mDatabase.child("users").child(thisUserID).child("lastUpdateLocation").setValue(System.currentTimeMillis()/1000);
+            Log.d("tag", "setThisUsersNewLocation:System.currentTimeMillis() " + System.currentTimeMillis());
+            mDatabase.child("users").child(thisUserID).child("lastUpdateLocation").setValue(System.currentTimeMillis());
 
 
 
@@ -722,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 //och om personB är inloggad
                                 //läggs personB till i personList.closePersonArrayList
                                 if (distanceInM <= thisUser.getChosenDistansInt()
-                                        && checkTimeDistance(personB) <= 60 * 10
+                                        && checkTimeDistance(personB) <= maxTimeDistansLastLocation
                                         && distanceInM <= personB.getChosenDistansInt()
                                         && personB.getIfLoggedIn()) {
                                     personB.setDistansBetween(distanceInM);
@@ -736,7 +717,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                                 if (distanceInM > thisUser.getChosenDistansInt()
                                         || distanceInM > personB.getChosenDistansInt()
-                                        || personB.getIfLoggedIn() == false) {
+                                        || personB.getIfLoggedIn() == false
+                                        || checkTimeDistance(personB) > maxTimeDistansLastLocation) {
 
                                     for (Person personBToRemove:closePersonList) {
                                         if(personBToRemove.getPersonId().equals(personB.getPersonId())){
@@ -816,7 +798,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public double checkTimeDistance(Person personB){
-        double timeDistance = personB.getLastUpdateLocation() - System.currentTimeMillis()/1000;
+        //Log.d("tag", "checkTimeDistance: " +  ((System.currentTimeMillis() / 1000) - (personB.getLastUpdateLocation() / 1000)));
+        double timeDistance = (System.currentTimeMillis() / 1000) - (personB.getLastUpdateLocation() / 1000) ;
         return timeDistance;
     }
 
