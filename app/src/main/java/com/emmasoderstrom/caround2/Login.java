@@ -210,8 +210,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     public void goToCreat(){
         Intent intent = new Intent(this, CreateUser.class);
         String emailValid = emailReplaceInvaid(userEmail);
-        Log.d("tag", "goToCreat: emailValid " + emailValid);
-        intent.putExtra(EXTRA_MESSAGE, emailValid);
+        //Log.d("tag", "goToCreat: emailValid " + emailValid);
+        //intent.putExtra(EXTRA_MESSAGE, emailValid);
 
         sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
@@ -224,7 +224,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     public void goToMain(){
         Intent intent = new Intent(this, MainActivity.class);
         String emailValid = emailReplaceInvaid(userEmail);
-        intent.putExtra(EXTRA_MESSAGE, emailValid);
+        //intent.putExtra(EXTRA_MESSAGE, emailValid);
 
         sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 

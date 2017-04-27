@@ -79,14 +79,9 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         thisUserID = Login.thisUserID;
 
-
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-
 
         //hämtar google bild och sätter användar bild
         if (user != null) {
@@ -165,7 +160,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         Log.d("tag", "creatUserDone ");
 
         if(checkInternetOn()) {
-            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
 
             if (!firstName.getText().toString().isEmpty()
                     && !lastName.getText().toString().isEmpty()
@@ -174,9 +168,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
                 //om använder profil inte finns
                 if(thisUser == null) {
                     //Skapa och lagra denna nya användare i databasen
-
-                    //conventerar bil UIR till sträng så databasen kan ta imot den
-                    //String picString = userPic.toString();
 
                     Person personA = new Person(userPicS, thisUserID,
                             firstName.getText().toString(), lastName.getText().toString(),
@@ -205,7 +196,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
             }
 
         }else{
-            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
             noInternet();
         }
     }
@@ -224,7 +214,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         @Override
         protected Bitmap doInBackground(String... URL) {
 
-            //String image = userPic.toString();
             String imageURL = URL[0];
 
             Bitmap bitmap = null;
@@ -244,8 +233,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
         protected void onPostExecute(Bitmap result) {
             userImeageView.setImageBitmap(result);
             userBitmap = result;
-            // Close progressdialog
-            //mProgressDialog.dismiss();
         }
     }
 
@@ -288,7 +275,6 @@ public class CreateUser extends AppCompatActivity implements GoogleApiClient.OnC
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_no_internet)
-                //.setTitle("Ingeintenet hittat!")
                 .setCancelable(false)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {

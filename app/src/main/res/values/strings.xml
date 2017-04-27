@@ -7,7 +7,7 @@
     <string name="menu_friends">Vänner</string>
     <string name="menu_change_distans">Ändra avstånd</string>
     <string name="menu_notification">Notifikation</string>
-    <string name="menu_busy">Upptagen</string>
+    <string name="menu_account">Konto</string>
     <string name="menu_sing_out">Logga ut</string>
 
     <!--

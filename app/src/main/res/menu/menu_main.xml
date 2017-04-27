@@ -27,13 +27,12 @@
         app:showAsAction="never"
         />
 
-    <!--<item-->
-        <!--android:id="@+id/menu_busy"-->
-        <!--android:title="@string/menu_busy"-->
-        <!--android:checkable="true"-->
-        <!--android:orderInCategory="100"-->
-        <!--app:showAsAction="never"-->
-        <!--/>-->
+    <item
+        android:id="@+id/menu_account"
+        android:title="@string/menu_account"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
 
     <item
         android:id="@+id/menu_sing_out"

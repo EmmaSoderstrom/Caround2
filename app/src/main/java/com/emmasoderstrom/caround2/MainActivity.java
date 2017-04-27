@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     RelativeLayout noFriendCloseView;
     RelativeLayout internetNotOnView;
 
-    //PersonList personList;
     ArrayList<Person> closePersonList = new ArrayList<Person>();
 
     ArrayList<Person> lastNotiArray = new ArrayList<>();
@@ -133,13 +132,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         insMain = this;
 
         thisUserID = Login.thisUserID;
-        Log.d("tag", "onCreate: detta är det jag ska tittta på" + thisUserID);
-
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mapApiCreat();
-        //checkPermissionGPS();
 
         setToolbar();
         dialogChangeDistans = new DialogChangeDistansOneWheel(this, thisUser);
@@ -153,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         panelNumberOfFriends = getString(R.string.panel_number_of_friends);
 
         setThisUser();
-
-        //personList = new PersonList(this, 0);
 
         noFriendCloseView = (RelativeLayout) findViewById(R.id.no_friend_close);
         listCloseFriends = (ListView) findViewById(R.id.list_close_friends);
@@ -170,18 +164,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void onStart() {
         Log.d("tag", "Start");
+        super.onStart();
         mGoogleApiClient.connect();
         checkGPSOn();
 
         if (checkInternetOn(this)) {
-            Log.d("tag", "signIn: inget internett      true-------zzzzzzz--------->");
-
+            Log.d("tag", "signIn: internet ja");
         } else {
-            Log.d("tag", "signIn: inget internett      false-------zzzzzzz--------->");
             noInternet(this);
-
         }
-        super.onStart();
+
     }
 
     protected void onStop() {
@@ -189,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //mGoogleApiClient.disconnect();
         super.onStop();
     }
+
 
     @Override
     protected void onPause() {
@@ -201,6 +194,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onResume() {
         Log.d("tag", "onResume");
         super.onResume();
+        if(appIsInForegroundMode) {
+            checkGPSOn();
+
+            if (checkInternetOn(this)) {
+                Log.d("tag", "signIn: internet ja");
+            } else {
+                noInternet(this);
+            }
+        }
         appIsInForegroundMode = true;
         oldFriendNotiArray.clear();
     }
@@ -213,8 +215,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.d("tag", "<----------------spelare null Hämta spelare------------------>>>>>>>>>>");
 
                 thisUser = dataSnapshot.child("users")
                         .child(thisUserID)
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("tag", "<----------------2222222222------------------>>>>>>>>>>");
+                Log.d("tag", "<----------------Databas ändras------------------>");
                 thisUser = dataSnapshot.child("users").child(thisUserID).getValue(Person.class);
 
                 if (thisUser != null) {
@@ -290,20 +290,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return true;
             case R.id.menu_notification:
                 Log.d("tag", "mainactivity menu_notification");
-                //MenuItem notiItemMenu = (MenuItem)findViewById(R.id.menu_notification);
+
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    //notiIsCheckt = false;
                     mDatabase.child("users").child(thisUserID).child("notiIsCheckt").setValue(false);
                 } else {
                     item.setChecked(true);
-                    //notiIsCheckt = true;
                     mDatabase.child("users").child(thisUserID).child("notiIsCheckt").setValue(true);
                 }
                 return true;
-//            case R.id.menu_busy:
-//                Log.d("tag", "mainactivity menu_busy");
-//                return true;
+            case R.id.menu_account:
+                Log.d("tag", "mainactivity menu_settings");
+                intent = new Intent(this, CreateUser.class);
+                startActivity(intent);
+                return true;
             case R.id.menu_sing_out:
                 Log.d("tag", "mainactivity menu_sing_out");
 
@@ -454,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     boolean firstConnect = true;
 
     public void checkGPSOn() {
-        Log.d("tag", "checkGPSOn: ");
+        Log.d("tag", "checkGPSOn: " + firstConnect);
 
         if (firstConnect) {
 
@@ -481,6 +481,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         case LocationSettingsStatusCodes.SUCCESS:
                             // All location settings are satisfied. The client can initialize location
                             Log.d("tag", "onResult: SUCCESS");
+                           // if (appIsInForegroundMode) {
+                                //mGoogleApiClient.connect();
+                            //}
                             break;
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                             // Location settings are NOT satisfied. But could be fixed by showing the user a dialog.
@@ -490,8 +493,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 Log.d("tag", "onResult: RESOLUTION_REQUIRED");
                                 if (appIsInForegroundMode) {
                                     status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
+                                    firstConnect = false;
                                 }
-                                firstConnect = false;
+
 
                             } catch (IntentSender.SendIntentException e) {
                                 // Ignore the error.
@@ -517,15 +521,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("tag", "onActivityResult()");
+        Log.d("tag", "onActivityResult: ");
         firstConnect = true;
 
         switch (requestCode) {
             case REQUEST_LOCATION:
                 switch (resultCode) {
                     case Activity.RESULT_OK: {
-                        // All required changes were successfully made
-                        Log.d("tag", "Location enabled by user!");
+                        // Location enabled by user!
 
                         listCloseFriends.setVisibility(VISIBLE);
                         gpsNotOnView.setVisibility(INVISIBLE);
@@ -534,8 +537,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         break;
                     }
                     case Activity.RESULT_CANCELED: {
-                        // The user was asked to change settings, but chose not to
-                        Log.d("tag", "Location not enabled, user cancelled.");
+                        // Location not enabled, user cancelled.
 
                         listCloseFriends.setVisibility(INVISIBLE);
                         internetNotOnView.setVisibility(INVISIBLE);
@@ -564,7 +566,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(R.string.dialog_no_internet)
-                //.setTitle("Ingeintenet hittat!")
                 .setCancelable(false)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
@@ -588,6 +589,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         checkPermissionGPS();
     }
     public void onClickGpsTurnOn(View view){
+        Log.d("tag", "onClickGpsTurnOn: ");
         checkGPSOn();
     }
     public void onClickChangeDistans(View view){
